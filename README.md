@@ -1,11 +1,11 @@
-# my_study
+# My finances
 
 Helps analyze daily expenses.
 
-## Getting Started
+## Wireframe
 
-Wireframe
 ![img.png](img.png)
 
-Class diagram
+## Class diagram
+
 ![img_1.png](img_1.png)
