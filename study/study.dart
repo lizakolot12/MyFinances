@@ -22,6 +22,21 @@ class Song {
   }
 }
 
+class Playlist with SearchMixin {
+  final String _name;
+  final List<Song> _songs = [];
+
+  Playlist(this._name);
+
+  List<Song> get songs => _songs;
+
+  String get name => _name;
+
+  void addSong(Song song) {
+    _songs.add(song);
+  }
+}
+
 mixin SearchMixin {
   List<Song> search(String input, List<Song> songs) {
     final searchString = input.toLowerCase();
@@ -43,21 +58,6 @@ mixin SearchMixin {
     return songs
         .where((song) => song.name.toLowerCase().contains(name.toLowerCase()))
         .toList();
-  }
-}
-
-class Playlist with SearchMixin {
-  final String _name;
-  final List<Song> _songs = [];
-
-  Playlist(this._name);
-
-  List<Song> get songs => _songs;
-
-  String get name => _name;
-
-  void addSong(Song song) {
-    _songs.add(song);
   }
 }
 
@@ -83,8 +83,8 @@ int generateYear() {
   return minYear + random.nextInt(maxYear - minYear + 1);
 }
 
-int generateDuration(){
-  return  random.nextInt(360);
+int generateDuration() {
+  return random.nextInt(360);
 }
 
 void main() {
@@ -92,9 +92,10 @@ void main() {
 
   for (int i = 0; i < 30; i++) {
     playlist.addSong(
-        Song("Name_$i", "Singer_$i",generateDuration(), generateYear()));
+        Song("Name_$i", "Singer_$i", generateDuration(), generateYear()));
   }
 
+  print(playlist.name);
   playlist.songs.forEach((element) {
     print(element);
   });
