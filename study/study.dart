@@ -121,3 +121,43 @@ void main() {
     print(element);
   });
 }
+sealed class Vehicle {}
+
+class Car extends Vehicle {}
+
+class Truck implements Vehicle {}
+
+class Bicycle extends Vehicle {}
+
+// ERROR: Cannot be instantiated
+
+interface class DK{
+  void bjsdb() {
+    // TODO: implement bjsdb
+  }
+}
+
+ class Logger implements DK{
+  void log(String message) {
+
+  }
+  void bn() {
+
+  }
+  void test(){
+    print("QQQ");
+  }
+
+  @override
+  void bjsdb() {
+    // TODO: implement bjsdb
+  }
+}
+
+abstract class SomeThing {
+  void function();
+}
+
+abstract class ConsoleLogger implements Logger {
+
+}
