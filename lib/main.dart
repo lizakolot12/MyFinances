@@ -36,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _grid = false;
   final List<Transaction> _list = TransactionRepository().getAll();
+  int _selectedIndex = 0;
 
   void _changeView() {
     setState(() {
@@ -43,10 +44,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   void _remove(int index) {
-    //setState(() {
-    _list.removeAt(index);
-    //});
+    setState(() {
+      _list.removeAt(index);
+    });
   }
 
   @override
@@ -54,30 +61,35 @@ class _MyHomePageState extends State<MyHomePage> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: _changeView,
-              tooltip: 'Add new',
-              child: const Icon(Icons.ac_unit),
-            ),
-            appBar: AppBar(
-              title: Text('Мої витрати'),
-              bottom: const TabBar(
-                tabs: [
-                  Tab(text: 'Поточні'),
-                  Tab(text: 'Звіт'),
-                ],
+          floatingActionButton: FloatingActionButton(
+            onPressed: _changeView,
+            tooltip: 'Add new',
+            child: const Icon(Icons.add),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Поточні',
               ),
-            ),
-            body: TabBarView(
-              children: [
-                Center(
-                  child: body(context),
-                ),
-                const Center(
+              BottomNavigationBarItem(
+                icon: Icon(Icons.business),
+                label: 'Звіти',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.amber[800],
+            onTap: _onItemTapped,
+          ),
+          appBar: AppBar(
+            title: const Text('Мої витрати'),
+          ),
+          body: _selectedIndex == 0
+              ? createBody(context)
+              : const Center(
                   child: Text('Вміст вкладки 2'),
                 ),
-              ],
-            )));
+        ));
   }
 
   Widget buildList(BuildContext context) {
@@ -97,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget body(BuildContext context) {
+  Widget createBody(BuildContext context) {
     return Column(
       children: <Widget>[
         Text('Deliver features faster'),
