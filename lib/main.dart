@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 import 'data/recipe.dart';
 
@@ -13,27 +14,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Мої витрати',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'My recipes'),
+      home: const MyHomePage(title: 'Мої витрати'),
     );
   }
 }
@@ -49,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _grid = false;
-  final List<Recipe> _list = RecipeRepository().getAll();
+  final List<Transaction> _list = TransactionRepository().getAll();
 
   void _changeView() {
     setState(() {
@@ -65,31 +51,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: _grid == true ? buildGrid(context) : buildList(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _changeView,
-        tooltip: 'Change view',
-        child: const Icon(Icons.ac_unit),
-      ),
-    );
-  }
-
-  Widget buildGrid(BuildContext context) {
-    return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 1,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16),
-        itemCount: _list.length,
-        itemBuilder: (BuildContext ctx, index) {
-          return FullItem(_list[index], key: UniqueKey());
-        });
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: _changeView,
+              tooltip: 'Add new',
+              child: const Icon(Icons.ac_unit),
+            ),
+            appBar: AppBar(
+              title: Text('Мої витрати'),
+              bottom: const TabBar(
+                tabs: [
+                  Tab(text: 'Поточні'),
+                  Tab(text: 'Звіт'),
+                ],
+              ),
+            ),
+            body: TabBarView(
+              children: [
+                Center(
+                  child: body(context),
+                ),
+                const Center(
+                  child: Text('Вміст вкладки 2'),
+                ),
+              ],
+            )));
   }
 
   Widget buildList(BuildContext context) {
@@ -101,11 +89,23 @@ class _MyHomePageState extends State<MyHomePage> {
             onDismissed: (direction) {
               _remove(index);
             },
-            child: SimpleItem(
-              recipe: _list[index],
+            child: TransactionItem(
+              transaction: _list[index],
               key: UniqueKey(),
             ));
       },
+    );
+  }
+
+  Widget body(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text('Deliver features faster'),
+        Text('Craft beautiful UIs'),
+        Expanded(
+            // Визначте висоту списку за вашими потребами
+            child: buildList(context))
+      ],
     );
   }
 }
