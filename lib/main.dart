@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 
@@ -186,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               transform: Matrix4.rotationZ(0.1),
               decoration: BoxDecoration(
-                  color: const Color(0xFF0E3311).withOpacity(0.5),
+                  color:  Colors.black.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(16)),
               child: const Text(
                 "Приклад використання Stack",
