@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
-import 'data/recipe.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +9,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,25 +32,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _grid = false;
-  final List<Transaction> _list = TransactionRepository().getAll();
-  int _selectedIndex = 0;
+  final List<Transaction> list = TransactionRepository().getAll();
+  int selectedIndex = 0;
 
-  void _changeView() {
+  void addNew() {
+    setState(() {});
+  }
+
+  void onItemTapped(int index) {
     setState(() {
-      _grid = !_grid;
+      selectedIndex = index;
     });
   }
 
-  void _onItemTapped(int index) {
+  void remove(int index) {
     setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  void _remove(int index) {
-    setState(() {
-      _list.removeAt(index);
+      list.removeAt(index);
     });
   }
 
@@ -62,8 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
         length: 2,
         child: Scaffold(
           floatingActionButton: FloatingActionButton(
-            onPressed: _changeView,
             tooltip: 'Add new',
+            onPressed: addNew,
             child: const Icon(Icons.add),
           ),
           bottomNavigationBar: BottomNavigationBar(
@@ -77,47 +72,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 label: 'Звіти',
               ),
             ],
-            currentIndex: _selectedIndex,
+            currentIndex: selectedIndex,
             selectedItemColor: Colors.amber[800],
-            onTap: _onItemTapped,
+            onTap: onItemTapped,
           ),
           appBar: AppBar(
             title: const Text('Мої витрати'),
           ),
-          body: _selectedIndex == 0
-              ? createBody(context)
+          body: selectedIndex == 0
+              ? createBody()
               : const Center(
                   child: Text('Вміст вкладки 2'),
                 ),
         ));
   }
 
-  Widget buildList(BuildContext context) {
+  Widget buildList() {
     return ListView.builder(
-      itemCount: _list.length,
+      itemCount: list.length,
       itemBuilder: (BuildContext context, int index) {
         return Dismissible(
-            key: Key(_list[index].name),
+            key: Key(list[index].name),
             onDismissed: (direction) {
-              _remove(index);
+              remove(index);
             },
             child: TransactionItem(
-              transaction: _list[index],
+              transaction: list[index],
               key: UniqueKey(),
             ));
       },
     );
   }
 
-  Widget createBody(BuildContext context) {
+  Widget createBody() {
     return Column(
-      children: <Widget>[
-        Text('Deliver features faster'),
-        Text('Craft beautiful UIs'),
-        Expanded(
-            // Визначте висоту списку за вашими потребами
-            child: buildList(context))
-      ],
+      children: <Widget>[const Text('Some UI'), Expanded(child: buildList())],
     );
   }
 }

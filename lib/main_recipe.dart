@@ -49,18 +49,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _grid = false;
-  final List<Recipe> _list = RecipeRepository().getAll();
+  bool isGrid = false;
+  final List<Recipe> list = RecipeRepository().getAll();
 
   void _changeView() {
     setState(() {
-      _grid = !_grid;
+      isGrid = !isGrid;
     });
   }
 
   void _remove(int index) {
     //setState(() {
-    _list.removeAt(index);
+    list.removeAt(index);
     //});
   }
 
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: _grid == true ? buildGrid(context) : buildList(context),
+      body: isGrid ? buildGrid() : buildList(),
       floatingActionButton: FloatingActionButton(
         onPressed: _changeView,
         tooltip: 'Change view',
@@ -80,31 +80,31 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildGrid(BuildContext context) {
+  Widget buildGrid() {
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
             childAspectRatio: 1,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16),
-        itemCount: _list.length,
-        itemBuilder: (BuildContext ctx, index) {
-          return FullItem(_list[index], key: UniqueKey());
+        itemCount: list.length,
+        itemBuilder: (_, index) {
+          return FullItem(key: UniqueKey(), recipe:list[index]);
         });
   }
 
-  Widget buildList(BuildContext context) {
+  Widget buildList() {
     return ListView.builder(
-      itemCount: _list.length,
-      itemBuilder: (BuildContext context, int index) {
+      itemCount: list.length,
+      itemBuilder: (_, int index) {
         return Dismissible(
-            key: Key(_list[index].name),
+            key: Key(list[index].name),
             onDismissed: (direction) {
               _remove(index);
             },
             child: SimpleItem(
-              recipe: _list[index],
               key: UniqueKey(),
+              recipe: list[index],
             ));
       },
     );

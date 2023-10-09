@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'data/recipe.dart';
 
 class FullItem extends StatelessWidget {
-  final Recipe _recipe;
+  final Recipe recipe;
 
-  const FullItem(this._recipe, {super.key});
+  const FullItem({required super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class FullItem extends StatelessWidget {
         ),
         child: ClipOval(
           child: Image.asset(
-            _recipe.uri,
+            recipe.uri,
             fit: BoxFit.cover,
           ),
         ));
