@@ -34,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
+  bool stretch = true;
 
   void addNew() {
     setState(() {});
@@ -80,11 +81,61 @@ class _MyHomePageState extends State<MyHomePage> {
             title: const Text('Мої витрати'),
           ),
           body: selectedIndex == 0
-              ? createBody()
+              ? mySliver()
               : const Center(
                   child: Text('Вміст вкладки 2'),
                 ),
+
         ));
+  }
+
+  Widget mySliver(){
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: <Widget>[
+        SliverAppBar(
+          stretch: stretch,
+          onStretchTrigger: () async {
+            // Triggers when stretching
+          },
+          // [stretchTriggerOffset] describes the amount of overscroll that must occur
+          // to trigger [onStretchTrigger]
+          //
+          // Setting [stretchTriggerOffset] to a value of 300.0 will trigger
+          // [onStretchTrigger] when the user has overscrolled by 300.0 pixels.
+          stretchTriggerOffset: 300.0,
+          expandedHeight: 200.0,
+          flexibleSpace: FlexibleSpaceBar(
+            title: const Text('Що було куплено нещодавно',
+                style: TextStyle(shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  /*    Shadow(
+                          offset: Offset(10.0, 10.0),
+                          blurRadius: 8.0,
+                          color: Color.fromARGB(125, 0, 0, 255),
+                        )*/
+                ])),
+            background:
+            Image.asset("assets/images/cake.png", fit: BoxFit.cover),
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              return TransactionItem(
+                transaction: list[index],
+                key: UniqueKey(),
+              );
+            },
+            childCount: list.length,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget buildList() {
