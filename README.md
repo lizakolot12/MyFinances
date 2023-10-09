@@ -10,4 +10,4 @@ Helps analyze daily expenses
 ![img_1.png](img_1.png)
 
 ## Demo
-![](gif-20231005-193719.gif)
+![](screen-20231009-140448.gif)
