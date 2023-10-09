@@ -2,11 +2,11 @@ class Transaction {
   final int _id;
   final String _name;
   final int _total;
-  final String? _tag;
+  final List<String>? _tags;
 
-  Transaction(this._id, this._name, this._total, this._tag);
+  Transaction(this._id, this._name, this._total, this._tags);
 
-  String? get tag => _tag;
+  List<String>? get tags => _tags;
 
   int get total => _total;
 
@@ -23,7 +23,7 @@ class TransactionRepository {
   }
 
   TransactionRepository() {
-    _transactions.add(Transaction(1, "продукти", 200, null));
+    _transactions.add(Transaction(1, "магазин", 200, ["солодощі", "овочі", "госп.товари", "канцелярія"]));
     _transactions.add(Transaction(2, "комуналка", 2000, null));
     _transactions.add(Transaction(3, "оренда", 3000, null));
     _transactions.add(Transaction(4, "продукти", 2530, null));
