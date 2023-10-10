@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 
@@ -60,6 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Мої витрати'),
+        ),
+        body: selectedIndex == 0 ? buildBody() : buildStack(),
         floatingActionButton: FloatingActionButton(
           tooltip: 'Add new',
           onPressed: addNew,
@@ -80,10 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
           selectedItemColor: Colors.blue[800],
           onTap: onItemTapped,
         ),
-        appBar: AppBar(
-          title: const Text('Мої витрати'),
-        ),
-        body: selectedIndex == 0 ? buildBody() : buildStack(),
       ),
     );
   }
@@ -109,14 +107,18 @@ class _MyHomePageState extends State<MyHomePage> {
           stretchTriggerOffset: 100.0,
           expandedHeight: 100.0,
           flexibleSpace: FlexibleSpaceBar(
-            title: const Text('Що було куплено нещодавно',
-                style: TextStyle(shadows: <Shadow>[
+            title: const Text(
+              'Що було куплено нещодавно',
+              style: TextStyle(
+                shadows: <Shadow>[
                   Shadow(
                     offset: Offset(1.0, 1.0),
                     blurRadius: 3.0,
                     color: Color.fromARGB(255, 0, 0, 0),
                   ),
-                ])),
+                ],
+              ),
+            ),
             background:
                 Image.asset("assets/images/cake.png", fit: BoxFit.cover),
           ),
@@ -131,14 +133,15 @@ class _MyHomePageState extends State<MyHomePage> {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return Dismissible(
-              key: Key(list[index].name),
-              onDismissed: (direction) {
-                remove(index);
-              },
-              child: TransactionItem(
-                transaction: list[index],
-                key: UniqueKey(),
-              ));
+            key: Key(list[index].name),
+            onDismissed: (direction) {
+              remove(index);
+            },
+            child: TransactionItem(
+              transaction: list[index],
+              key: UniqueKey(),
+            ),
+          );
         },
         childCount: list.length,
       ),
@@ -181,19 +184,20 @@ class _MyHomePageState extends State<MyHomePage> {
     return Stack(
       children: <Widget>[
         Center(
-            child:
-                Image.asset("assets/images/cake.png", fit: BoxFit.fitHeight)),
+          child: Image.asset("assets/images/cake.png", fit: BoxFit.fitHeight),
+        ),
         Center(
           child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              transform: Matrix4.rotationZ(0.1),
-              decoration: BoxDecoration(
-                  color:  Colors.black.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(16)),
-              child: const Text(
-                "Приклад використання Stack",
-                style: TextStyle(fontSize: 25, color: Colors.white),
-              )),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            transform: Matrix4.rotationZ(0.1),
+            decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(16)),
+            child: const Text(
+              "Приклад використання Stack",
+              style: TextStyle(fontSize: 25, color: Colors.white),
+            ),
+          ),
         ),
       ],
     );
