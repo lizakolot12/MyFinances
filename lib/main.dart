@@ -7,50 +7,14 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Мої витрати',
-      theme: ThemeData(
-        //colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
-          brightness: Brightness.light,
-        ),
-
-        // Define the default `TextTheme`. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
-        textTheme: TextTheme(
-          titleLarge: GoogleFonts.pacifico(
-            fontSize: 24,
-            fontStyle: FontStyle.italic,
-          ),
-          displaySmall: GoogleFonts.pacifico(
-            fontSize: 14,
-          ),
-        ),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(
-        title: 'Мої витрати',
-      ),
-    );
-  }
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _MyAppState extends State<MyApp> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
   bool isLight = true;
@@ -81,45 +45,69 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Мої витрати'),
-          actions: [ IconButton(
-            icon: const Icon(Icons.ac_unit),
-            tooltip: 'Toggle theme',
-            onPressed: toggleTheme,
-          )],
-        ),
-        body: selectedIndex == 0 ? buildBody() : buildStack(),
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Add new',
-          onPressed: addNew,
-          child: const Icon(
-            Icons.add,
+    return MaterialApp(
+        title: 'Мої витрати',
+        theme: ThemeData(
+          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.green,
+            brightness: isLight ? Brightness.light : Brightness.dark,
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-              ),
-              label: 'Поточні',
+
+          // Define the default `TextTheme`. Use this to specify the default
+          // text styling for headlines, titles, bodies of text, and more.
+          textTheme: TextTheme(
+            titleLarge: GoogleFonts.pacifico(
+              fontSize: 24,
+              fontStyle: FontStyle.italic,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.business,
-              ),
-              label: 'Звіти',
+            displaySmall: GoogleFonts.pacifico(
+              fontSize: 14,
             ),
-          ],
-          currentIndex: selectedIndex,
-          onTap: onItemTapped,
+          ),
+          useMaterial3: true,
         ),
-      ),
-    );
+        home: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Мої витрати'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.ac_unit),
+                  tooltip: 'Toggle theme',
+                  onPressed: toggleTheme,
+                )
+              ],
+            ),
+            body: selectedIndex == 0 ? buildBody() : buildStack(),
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add new',
+              onPressed: addNew,
+              child: const Icon(
+                Icons.add,
+              ),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.home,
+                  ),
+                  label: 'Поточні',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.business,
+                  ),
+                  label: 'Звіти',
+                ),
+              ],
+              currentIndex: selectedIndex,
+              onTap: onItemTapped,
+            ),
+          ),
+        ));
   }
 
   Widget buildBody() {
@@ -154,16 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-
-              /*  style: TextStyle(
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ],
-              )*/
             ),
             background: Image.asset(
               "assets/images/cake.png",
