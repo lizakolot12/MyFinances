@@ -17,7 +17,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Мої витрати'),
+      home: const MyHomePage(
+        title: 'Мої витрати',
+      ),
     );
   }
 }
@@ -65,16 +67,22 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: FloatingActionButton(
           tooltip: 'Add new',
           onPressed: addNew,
-          child: const Icon(Icons.add),
+          child: const Icon(
+            Icons.add,
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(
+                Icons.home,
+              ),
               label: 'Поточні',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.business),
+              icon: Icon(
+                Icons.business,
+              ),
               label: 'Звіти',
             ),
           ],
@@ -119,8 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            background:
-                Image.asset("assets/images/cake.png", fit: BoxFit.cover),
+            background: Image.asset(
+              "assets/images/cake.png",
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         buildSliverList(),
@@ -184,18 +194,25 @@ class _MyHomePageState extends State<MyHomePage> {
     return Stack(
       children: <Widget>[
         Center(
-          child: Image.asset("assets/images/cake.png", fit: BoxFit.fitHeight),
+          child: Image.asset(
+            "assets/images/cake.png",
+            fit: BoxFit.fitHeight,
+          ),
         ),
         Center(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             transform: Matrix4.rotationZ(0.1),
             decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(16)),
+              color: Colors.black.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: const Text(
               "Приклад використання Stack",
-              style: TextStyle(fontSize: 25, color: Colors.white),
+              style: TextStyle(
+                fontSize: 25,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
