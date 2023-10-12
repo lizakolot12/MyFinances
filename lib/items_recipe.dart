@@ -26,11 +26,10 @@ class FullItem extends StatelessWidget {
   }
 }
 
-
 class SimpleItem extends StatelessWidget {
   final Recipe recipe;
 
-   const SimpleItem({super.key, required this.recipe});
+  const SimpleItem({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,8 @@ class SimpleItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black12,
         border: Border.all(width: 1.0),
-        borderRadius: const BorderRadius.all(Radius.circular(16.0) 
+        borderRadius: const BorderRadius.all(
+          Radius.circular(16.0),
         ),
       ),
       child: Row(
@@ -50,14 +50,14 @@ class SimpleItem extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: SizedBox.fromSize(
-                  size: const Size.fromRadius(48), 
+                  size: const Size.fromRadius(48),
                   child: Image.asset(recipe.uri, fit: BoxFit.cover),
                 ),
               )),
           Expanded(
               flex: 3,
               child: Padding(
-                  padding: const EdgeInsets.all(16), 
+                  padding: const EdgeInsets.all(16),
                   child: Text(recipe.name,
                       style: const TextStyle(
                         fontSize: 18,
