@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Мої витрати',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        //colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          brightness: Brightness.light,
+        ),
+
+        // Define the default `TextTheme`. Use this to specify the default
+        // text styling for headlines, titles, bodies of text, and more.
+        textTheme: TextTheme(
+          titleLarge: GoogleFonts.pacifico(
+            fontSize: 24,
+            fontStyle: FontStyle.italic,
+          ),
+          displaySmall: GoogleFonts.pacifico(
+            fontSize: 14,
+          ),
+        ),
         useMaterial3: true,
       ),
       home: const MyHomePage(
@@ -36,11 +53,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
+  bool isLight = true;
   bool stretch = true;
 
   void addNew() {
     //for future screen
     setState(() {});
+  }
+
+  void toggleTheme() {
+    setState(() {
+      isLight = !isLight;
+    });
   }
 
   void onItemTapped(int index) {
@@ -62,6 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Мої витрати'),
+          actions: [ IconButton(
+            icon: const Icon(Icons.ac_unit),
+            tooltip: 'Toggle theme',
+            onPressed: toggleTheme,
+          )],
         ),
         body: selectedIndex == 0 ? buildBody() : buildStack(),
         floatingActionButton: FloatingActionButton(
@@ -87,7 +116,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
           currentIndex: selectedIndex,
-          selectedItemColor: Colors.blue[800],
           onTap: onItemTapped,
         ),
       ),
@@ -115,9 +143,19 @@ class _MyHomePageState extends State<MyHomePage> {
           stretchTriggerOffset: 100.0,
           expandedHeight: 100.0,
           flexibleSpace: FlexibleSpaceBar(
-            title: const Text(
+            title: Text(
               'Що було куплено нещодавно',
-              style: TextStyle(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                shadows: <Shadow>[
+                  const Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Color.fromARGB(255, 243, 224, 224),
+                  ),
+                ],
+              ),
+
+              /*  style: TextStyle(
                 shadows: <Shadow>[
                   Shadow(
                     offset: Offset(1.0, 1.0),
@@ -125,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ],
-              ),
+              )*/
             ),
             background: Image.asset(
               "assets/images/cake.png",
@@ -204,14 +242,12 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             transform: Matrix4.rotationZ(0.1),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Text(
               "Приклад використання Stack",
               style: TextStyle(
                 fontSize: 25,
-                color: Colors.white,
               ),
             ),
           ),

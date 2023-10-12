@@ -12,7 +12,6 @@ class TransactionItem extends StatelessWidget {
       margin: const EdgeInsets.all(16.0),
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.black12,
         border: Border.all(width: 1.0),
         borderRadius: const BorderRadius.all(
           Radius.circular(16.0),
@@ -30,7 +29,6 @@ class TransactionItem extends StatelessWidget {
                     transaction.name,
                     style: const TextStyle(
                       fontSize: 18,
-                      color: Colors.teal,
                     ),
                   ),
                 ),
@@ -41,9 +39,6 @@ class TransactionItem extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   child: Text(
                     "${transaction.total} грн.",
-                    style: const TextStyle(
-                      color: Colors.cyan,
-                    ),
                   ),
                 ),
               ),
@@ -55,7 +50,6 @@ class TransactionItem extends StatelessWidget {
               children: [
                 for (var i in transaction.tags ?? [])
                   Chip(
-                    backgroundColor: Colors.blueAccent,
                     padding: const EdgeInsets.symmetric(
                       vertical: 4,
                       horizontal: 8,
@@ -67,11 +61,7 @@ class TransactionItem extends StatelessWidget {
                     ),
                     label: Text(
                       i,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      style: Theme.of(context).textTheme.displaySmall,
                     ),
                   ),
               ],
@@ -92,7 +82,6 @@ class TransactionGridItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(4.0),
       decoration: BoxDecoration(
-        color: Colors.black12,
         border: Border.all(width: 1.0),
         borderRadius: const BorderRadius.all(
           Radius.circular(16.0),
@@ -109,7 +98,6 @@ class TransactionGridItem extends StatelessWidget {
                   transaction.name,
                   style: const TextStyle(
                     fontSize: 18,
-                    color: Colors.teal,
                   ),
                 ),
               ),
@@ -120,9 +108,6 @@ class TransactionGridItem extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   "${transaction.total} грн.",
-                  style: const TextStyle(
-                    color: Colors.deepPurpleAccent,
-                  ),
                 ),
               ),
             ),
