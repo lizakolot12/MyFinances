@@ -14,39 +14,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Мої витрати',
-        localizationsDelegates: [
-          AppLocalizations.delegate, // Add this line
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: [
-          Locale('en'),
-          Locale('uk'),
-        ],
-        theme: ThemeData(
-          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.green,
-            // brightness: isLight ? Brightness.light : Brightness.dark,
-          ),
-
-          // Define the default `TextTheme`. Use this to specify the default
-          // text styling for headlines, titles, bodies of text, and more.
-          textTheme: TextTheme(
-            titleLarge: GoogleFonts.pacifico(
-              fontSize: 24,
-              fontStyle: FontStyle.italic,
-            ),
-            displaySmall: GoogleFonts.pacifico(
-              fontSize: 14,
-            ),
-          ),
-          useMaterial3: true,
-        ),
-        home: MainPage());
+    return const MaterialApp(localizationsDelegates: [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ], supportedLocales: [
+      Locale('en'),
+      Locale('uk'),
+    ], home: MainPage());
   }
 }
 
@@ -60,7 +36,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
-  bool isLight = true;
+  bool isLight = false;
   bool stretch = true;
 
   void addNew() {
@@ -86,49 +62,77 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  ColorScheme _getLightColors() {
+    return ColorScheme.fromSeed(
+      seedColor: Colors.green,
+      brightness: Brightness.light,
+    );
+  }
+
+  ColorScheme _getDarkColors() {
+    return ColorScheme.fromSeed(
+      seedColor: Colors.cyanAccent,
+      brightness: Brightness.dark,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.title),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.ac_unit),
-              tooltip: 'Toggle theme',
-              onPressed: toggleTheme,
-            )
-          ],
-        ),
-        body: selectedIndex == 0 ? buildBody() : buildStack(),
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Add new',
-          onPressed: addNew,
-          child: const Icon(
-            Icons.add,
+    return Theme(
+        data: ThemeData(
+          colorScheme: isLight ? _getLightColors() : _getDarkColors(),
+          textTheme: TextTheme(
+            titleLarge: GoogleFonts.pacifico(
+              fontSize: 24,
+              fontStyle: FontStyle.italic,
+            ),
+            displaySmall: GoogleFonts.pacifico(
+              fontSize: 14,
+            ),
           ),
+          useMaterial3: true,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.home,
-              ),
-              label: AppLocalizations.of(context)!.currents,
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.title),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.ac_unit),
+                  tooltip: 'Toggle theme',
+                  onPressed: toggleTheme,
+                )
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.business,
+            body: selectedIndex == 0 ? buildBody() : buildStack(),
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add new',
+              onPressed: addNew,
+              child: const Icon(
+                Icons.add,
               ),
-              label: AppLocalizations.of(context)!.reports,
             ),
-          ],
-          currentIndex: selectedIndex,
-          onTap: onItemTapped,
-        ),
-      ),
-    );
+            bottomNavigationBar: BottomNavigationBar(
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: const Icon(
+                    Icons.home,
+                  ),
+                  label: AppLocalizations.of(context)!.currents,
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(
+                    Icons.business,
+                  ),
+                  label: AppLocalizations.of(context)!.reports,
+                ),
+              ],
+              currentIndex: selectedIndex,
+              onTap: onItemTapped,
+            ),
+          ),
+        ));
   }
 
   Widget buildBody() {
