@@ -36,7 +36,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
-  bool isLight = false;
+  bool isLight = true;
   bool stretch = true;
 
   void addNew() {
