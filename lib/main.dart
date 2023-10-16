@@ -66,12 +66,15 @@ class _MainAppState extends State<MyApp> {
           ),
           useMaterial3: true,
         ),
-        home: MainPage());
+        home: MainPage(handleBrightnessChange: toggleTheme,));
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+
+  final void Function() handleBrightnessChange;
+  const MainPage({ required this.handleBrightnessChange,super.key});
+
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -106,13 +109,13 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.title),
-          /*     actions: [
+               actions: [
             IconButton(
               icon: const Icon(Icons.ac_unit),
               tooltip: 'Toggle theme',
-              onPressed: toggleTheme,
+        onPressed: () => widget.handleBrightnessChange(),
             )
-          ],*/
+          ],
         ),
         body: selectedIndex == 0 ? buildBody() : buildStack(),
         floatingActionButton: FloatingActionButton(
