@@ -11,7 +11,7 @@ extension SpecialTextExtensions on ThemeData {
           offset: Offset(1.0, 1.0),
           blurRadius: 3.0,
           color: Color.fromARGB(255, 243, 224, 224),
-        )
+        ),
       ],
     );
   }

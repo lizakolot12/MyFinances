@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,14 +27,14 @@ class _MainAppState extends State<MyApp> {
     });
   }
 
-  ColorScheme _getLightColors() {
+  ColorScheme getLightColors() {
     return ColorScheme.fromSeed(
       seedColor: Colors.green,
       brightness: Brightness.light,
     );
   }
 
-  ColorScheme _getDarkColors() {
+  ColorScheme getDarkColors() {
     return ColorScheme.fromSeed(
       seedColor: Colors.cyanAccent,
       brightness: Brightness.dark,
@@ -43,38 +44,40 @@ class _MainAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'),
-          Locale('uk'),
-        ],
-        theme: ThemeData(
-          colorScheme: isLight ? _getLightColors() : _getDarkColors(),
-          textTheme: TextTheme(
-            titleLarge: GoogleFonts.pacifico(
-              fontSize: 24,
-              fontStyle: FontStyle.italic,
-            ),
-            displaySmall: GoogleFonts.pacifico(
-              fontSize: 14,
-            ),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('uk'),
+      ],
+      theme: ThemeData(
+        colorScheme: isLight ? getLightColors() : getDarkColors(),
+        textTheme: TextTheme(
+          titleLarge: GoogleFonts.pacifico(
+            fontSize: 24,
+            fontStyle: FontStyle.italic,
           ),
-          useMaterial3: true,
+          displaySmall: GoogleFonts.pacifico(
+            fontSize: 14,
+          ),
         ),
-        home: MainPage(handleBrightnessChange: toggleTheme,));
+        useMaterial3: true,
+      ),
+      home: MainPage(
+        handleBrightnessChange: toggleTheme,
+      ),
+    );
   }
 }
 
 class MainPage extends StatefulWidget {
-
   final void Function() handleBrightnessChange;
-  const MainPage({ required this.handleBrightnessChange,super.key});
 
+  const MainPage({required this.handleBrightnessChange, super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -84,6 +87,7 @@ class _MainPageState extends State<MainPage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
   bool stretch = true;
+  Locale? myLocale;
 
   void addNew() {
     //for future screen
@@ -96,6 +100,18 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  //тільки для прикладу.В готовому застосунку ручної зміни мови не буде.
+  void toggleLanguage() {
+    setState(() {
+      Locale current = myLocale ??= Localizations.localeOf(context);
+      if (current == const Locale('en')) {
+        myLocale = const Locale('uk');
+      } else {
+        myLocale = const Locale('en');
+      }
+    });
+  }
+
   void remove(int index) {
     setState(() {
       list.removeAt(index);
@@ -104,45 +120,59 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.title),
-               actions: [
-            IconButton(
-              icon: const Icon(Icons.ac_unit),
-              tooltip: 'Toggle theme',
-        onPressed: () => widget.handleBrightnessChange(),
-            )
-          ],
-        ),
-        body: selectedIndex == 0 ? buildBody() : buildStack(),
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Add new',
-          onPressed: addNew,
-          child: const Icon(
-            Icons.add,
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.home,
+    myLocale ??= Localizations.localeOf(context);
+    return Localizations.override(
+      context: context,
+      locale: myLocale,
+      child: Builder(
+        builder: (context) {
+          return DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(AppLocalizations.of(context)!.title),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.ac_unit),
+                    tooltip: 'Toggle theme',
+                    onPressed: () => widget.handleBrightnessChange(),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.language),
+                    tooltip: 'Toggle language',
+                    onPressed: toggleLanguage,
+                  )
+                ],
               ),
-              label: AppLocalizations.of(context)!.currents,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.business,
+              body: selectedIndex == 0 ? buildBody() : buildStack(),
+              floatingActionButton: FloatingActionButton(
+                tooltip: 'Add new',
+                onPressed: addNew,
+                child: const Icon(
+                  Icons.add,
+                ),
               ),
-              label: AppLocalizations.of(context)!.reports,
+              bottomNavigationBar: BottomNavigationBar(
+                items: <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: const Icon(
+                      Icons.home,
+                    ),
+                    label: AppLocalizations.of(context)!.currents,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(
+                      Icons.business,
+                    ),
+                    label: AppLocalizations.of(context)!.reports,
+                  ),
+                ],
+                currentIndex: selectedIndex,
+                onTap: onItemTapped,
+              ),
             ),
-          ],
-          currentIndex: selectedIndex,
-          onTap: onItemTapped,
-        ),
+          );
+        },
       ),
     );
   }
