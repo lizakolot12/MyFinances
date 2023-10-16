@@ -4,61 +4,25 @@ import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'theme_extensions.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(localizationsDelegates: [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ], supportedLocales: [
-      Locale('en'),
-      Locale('uk'),
-    ], home: MainPage());
-  }
+  State<MyApp> createState() => _MainAppState();
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  final List<Transaction> list = TransactionRepository().getAll();
-  int selectedIndex = 0;
+class _MainAppState extends State<MyApp> {
   bool isLight = true;
-  bool stretch = true;
-
-  void addNew() {
-    //for future screen
-    setState(() {});
-  }
 
   void toggleTheme() {
     setState(() {
       isLight = !isLight;
-    });
-  }
-
-  void onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
-  void remove(int index) {
-    setState(() {
-      list.removeAt(index);
     });
   }
 
@@ -78,8 +42,18 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-        data: ThemeData(
+    return MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('uk'),
+        ],
+        theme: ThemeData(
           colorScheme: isLight ? _getLightColors() : _getDarkColors(),
           textTheme: TextTheme(
             titleLarge: GoogleFonts.pacifico(
@@ -92,47 +66,82 @@ class _MainPageState extends State<MainPage> {
           ),
           useMaterial3: true,
         ),
-        child: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.title),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.ac_unit),
-                  tooltip: 'Toggle theme',
-                  onPressed: toggleTheme,
-                )
-              ],
-            ),
-            body: selectedIndex == 0 ? buildBody() : buildStack(),
-            floatingActionButton: FloatingActionButton(
-              tooltip: 'Add new',
-              onPressed: addNew,
-              child: const Icon(
-                Icons.add,
-              ),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: const Icon(
-                    Icons.home,
-                  ),
-                  label: AppLocalizations.of(context)!.currents,
-                ),
-                BottomNavigationBarItem(
-                  icon: const Icon(
-                    Icons.business,
-                  ),
-                  label: AppLocalizations.of(context)!.reports,
-                ),
-              ],
-              currentIndex: selectedIndex,
-              onTap: onItemTapped,
-            ),
+        home: MainPage());
+  }
+}
+
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  final List<Transaction> list = TransactionRepository().getAll();
+  int selectedIndex = 0;
+  bool stretch = true;
+
+  void addNew() {
+    //for future screen
+    setState(() {});
+  }
+
+  void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
+  void remove(int index) {
+    setState(() {
+      list.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.title),
+          /*     actions: [
+            IconButton(
+              icon: const Icon(Icons.ac_unit),
+              tooltip: 'Toggle theme',
+              onPressed: toggleTheme,
+            )
+          ],*/
+        ),
+        body: selectedIndex == 0 ? buildBody() : buildStack(),
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'Add new',
+          onPressed: addNew,
+          child: const Icon(
+            Icons.add,
           ),
-        ));
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: const Icon(
+                Icons.home,
+              ),
+              label: AppLocalizations.of(context)!.currents,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(
+                Icons.business,
+              ),
+              label: AppLocalizations.of(context)!.reports,
+            ),
+          ],
+          currentIndex: selectedIndex,
+          onTap: onItemTapped,
+        ),
+      ),
+    );
   }
 
   Widget buildBody() {
@@ -158,15 +167,7 @@ class _MainPageState extends State<MainPage> {
           flexibleSpace: FlexibleSpaceBar(
             title: Text(
               AppLocalizations.of(context)!.mainDesription,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                shadows: <Shadow>[
-                  const Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Color.fromARGB(255, 243, 224, 224),
-                  ),
-                ],
-              ),
+              style: Theme.of(context).mySpecialTextStyle,
             ),
             background: Image.asset(
               "assets/images/cake.png",
