@@ -41,6 +41,18 @@ class _MainAppState extends State<MyApp> {
     );
   }
 
+  TextTheme getTextTheme() {
+    return TextTheme(
+      titleLarge: GoogleFonts.pacifico(
+        fontSize: 24,
+        fontStyle: FontStyle.italic,
+      ),
+      displaySmall: GoogleFonts.pacifico(
+        fontSize: 14,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,18 +66,18 @@ class _MainAppState extends State<MyApp> {
         Locale('en'),
         Locale('uk'),
       ],
+      themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
       theme: ThemeData(
-        colorScheme: isLight ? getLightColors() : getDarkColors(),
-        textTheme: TextTheme(
-          titleLarge: GoogleFonts.pacifico(
-            fontSize: 24,
-            fontStyle: FontStyle.italic,
-          ),
-          displaySmall: GoogleFonts.pacifico(
-            fontSize: 14,
-          ),
-        ),
+        colorScheme: getLightColors(),
+        textTheme: getTextTheme(),
+        brightness: Brightness.light,
         useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        textTheme: getTextTheme(),
+        colorScheme: getDarkColors(),
+        useMaterial3: true,
+        brightness: Brightness.dark,
       ),
       home: MainPage(
         handleBrightnessChange: toggleTheme,
