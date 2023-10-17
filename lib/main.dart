@@ -1,42 +1,105 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'theme_extensions.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MyApp> {
+  bool isLight = true;
+
+  void toggleTheme() {
+    setState(() {
+      isLight = !isLight;
+    });
+  }
+
+  ColorScheme getLightColors() {
+    return ColorScheme.fromSeed(
+      seedColor: Colors.green,
+      brightness: Brightness.light,
+    );
+  }
+
+  ColorScheme getDarkColors() {
+    return ColorScheme.fromSeed(
+      seedColor: Colors.cyanAccent,
+      brightness: Brightness.dark,
+    );
+  }
+
+  TextTheme getTextTheme() {
+    return TextTheme(
+      titleLarge: GoogleFonts.pacifico(
+        fontSize: 24,
+        fontStyle: FontStyle.italic,
+      ),
+      displaySmall: GoogleFonts.pacifico(
+        fontSize: 14,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Мої витрати',
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('uk'),
+      ],
+      themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: getLightColors(),
+        textTheme: getTextTheme(),
+        brightness: Brightness.light,
         useMaterial3: true,
       ),
-      home: const MyHomePage(
-        title: 'Мої витрати',
+      darkTheme: ThemeData(
+        textTheme: getTextTheme(),
+        colorScheme: getDarkColors(),
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      home: MainPage(
+        handleBrightnessChange: toggleTheme,
       ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class MainPage extends StatefulWidget {
+  final void Function() handleBrightnessChange;
 
-  final String title;
+  const MainPage({required this.handleBrightnessChange, super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MainPageState extends State<MainPage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
   bool stretch = true;
+  Locale? myLocale;
 
   void addNew() {
     //for future screen
@@ -49,6 +112,18 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  //тільки для прикладу.В готовому застосунку ручної зміни мови не буде.
+  void toggleLanguage() {
+    setState(() {
+      Locale current = myLocale ??= Localizations.localeOf(context);
+      if (current == const Locale('en')) {
+        myLocale = const Locale('uk');
+      } else {
+        myLocale = const Locale('en');
+      }
+    });
+  }
+
   void remove(int index) {
     setState(() {
       list.removeAt(index);
@@ -57,39 +132,59 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Мої витрати'),
-        ),
-        body: selectedIndex == 0 ? buildBody() : buildStack(),
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Add new',
-          onPressed: addNew,
-          child: const Icon(
-            Icons.add,
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
+    myLocale ??= Localizations.localeOf(context);
+    return Localizations.override(
+      context: context,
+      locale: myLocale,
+      child: Builder(
+        builder: (context) {
+          return DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(AppLocalizations.of(context)!.title),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.ac_unit),
+                    tooltip: 'Toggle theme',
+                    onPressed: () => widget.handleBrightnessChange(),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.language),
+                    tooltip: 'Toggle language',
+                    onPressed: toggleLanguage,
+                  )
+                ],
               ),
-              label: 'Поточні',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.business,
+              body: selectedIndex == 0 ? buildBody() : buildStack(),
+              floatingActionButton: FloatingActionButton(
+                tooltip: 'Add new',
+                onPressed: addNew,
+                child: const Icon(
+                  Icons.add,
+                ),
               ),
-              label: 'Звіти',
+              bottomNavigationBar: BottomNavigationBar(
+                items: <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: const Icon(
+                      Icons.home,
+                    ),
+                    label: AppLocalizations.of(context)!.currents,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(
+                      Icons.business,
+                    ),
+                    label: AppLocalizations.of(context)!.reports,
+                  ),
+                ],
+                currentIndex: selectedIndex,
+                onTap: onItemTapped,
+              ),
             ),
-          ],
-          currentIndex: selectedIndex,
-          selectedItemColor: Colors.blue[800],
-          onTap: onItemTapped,
-        ),
+          );
+        },
       ),
     );
   }
@@ -115,17 +210,9 @@ class _MyHomePageState extends State<MyHomePage> {
           stretchTriggerOffset: 100.0,
           expandedHeight: 100.0,
           flexibleSpace: FlexibleSpaceBar(
-            title: const Text(
-              'Що було куплено нещодавно',
-              style: TextStyle(
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ],
-              ),
+            title: Text(
+              AppLocalizations.of(context)!.mainDesription,
+              style: Theme.of(context).mySpecialTextStyle,
             ),
             background: Image.asset(
               "assets/images/cake.png",
@@ -204,14 +291,12 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             transform: Matrix4.rotationZ(0.1),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Text(
               "Приклад використання Stack",
               style: TextStyle(
                 fontSize: 25,
-                color: Colors.white,
               ),
             ),
           ),
