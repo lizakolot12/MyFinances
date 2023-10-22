@@ -20,19 +20,14 @@ class MockAPI {
   ];
 
   Future<List<Task>> getTasks() async {
-    print("1");
     await Future.delayed(const Duration(seconds: 1));
-    print("2");
     return _list;
   }
 
   Future<void> removeTask(int index) async {
     _list[index].isProgress = true;
-    print("3");
     await Future.delayed(const Duration(seconds: 1));
-    print("4");
     _list.removeAt(index);
-    print("5");
   }
 
   Future<void> addTask(String title) async {
@@ -42,13 +37,13 @@ class MockAPI {
 }
 
 class MockRepository {
-  MockRepository(this.api);
-
   late MockAPI api;
+
+  MockRepository(this.api);
 
   Future<List<Task>> fetchTasks() async {
     var tasks = await api.getTasks();
-    _controller.add(tasks.length);
+    _controller.sink.add(tasks.length);
     return tasks;
   }
 
@@ -56,7 +51,7 @@ class MockRepository {
 
   Future<void> addTask(String name) async => api.addTask(name);
 
-  final _controller = StreamController<int>();
+  final _controller = StreamController<int>.broadcast();
 
   Stream<int> get count => _controller.stream;
 }

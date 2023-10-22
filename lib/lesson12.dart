@@ -1,12 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:my_study/util12.dart';
 
 class Lesson12 extends StatelessWidget {
   const Lesson12({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,25 +29,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   late MockRepository repository;
-  late AnimationController controller;
-  late Animation<double> curvedAnimation;
 
   @override
   void initState() {
     super.initState();
     repository = MockRepository(MockAPI());
-
-    controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      // reverseDuration: const Duration(seconds: 1),
-      vsync: this,
-    );
-
-    curvedAnimation = CurvedAnimation(
-      parent: controller,
-      curve: Curves.bounceInOut,
-      reverseCurve: Curves.easeOut,
-    );
   }
 
   void remove(int index) {
@@ -73,26 +57,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               stream: repository.count,
               builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
                 if (snapshot.hasData) {
-
                   return AnimatedSwitcher(
                     duration: const Duration(milliseconds: 500),
                     transitionBuilder:
                         (Widget child, Animation<double> animation) {
                       return ScaleTransition(
-                          scale: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: const Offset(0.0, 0.0),
-                            ).animate(animation),
-                            child: FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            ),
-                          ));
+                        scale: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: const Offset(0.0, 0.0),
+                          ).animate(animation),
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
+                        ),
+                      );
                     },
                     child: Text(
-                      style:  const TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                       ),
                       'Total: ${snapshot.data}',
@@ -129,11 +113,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           ),
                           onPressed: snapshot.data?[index].isProgress ?? false
                               ? null
-                              : () => remove(index)
-                          /*   onPressed:  snapshot.data?[index].isProgress??  () {
-                          remove(index);
-                        }: null,*/
-                          ),
+                              : () => remove(index)),
                     ],
                   ),
                 ),
@@ -148,10 +128,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          textFieldController = TextEditingController();
           displayTextInputDialog(context);
         },
-        tooltip: 'Increment',
+        tooltip: 'New task',
         child: const Icon(Icons.add),
       ),
     );
@@ -163,10 +142,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  TextEditingController textFieldController = TextEditingController();
-  String? valueText;
-
   Future<void> displayTextInputDialog(BuildContext context) async {
+    String? valueText;
+    TextEditingController textFieldController = TextEditingController();
     return showDialog(
       context: context,
       builder: (context) {
@@ -174,37 +152,35 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           title: const Text('Input new task'),
           content: TextField(
             onChanged: (value) {
-              setState(() {
-                print(value);
-                valueText = value;
-              });
+              setState(
+                () {
+                  valueText = value;
+                },
+              );
             },
             controller: textFieldController,
             decoration: const InputDecoration(hintText: "Title"),
           ),
           actions: <Widget>[
             MaterialButton(
-              color: Colors.red,
-              textColor: Colors.white,
               child: const Text('CANCEL'),
               onPressed: () {
-                setState(() {
-                  Navigator.pop(context);
-                });
+                setState(
+                  () {
+                    Navigator.pop(context);
+                  },
+                );
               },
             ),
             MaterialButton(
-              color: Colors.green,
-              textColor: Colors.white,
               child: const Text('OK'),
               onPressed: () {
                 setState(
                   () {
                     if (valueText != null) {
                       repository.addTask(valueText ?? "");
+                      Navigator.pop(context);
                     }
-
-                    Navigator.pop(context);
                   },
                 );
               },
@@ -213,11 +189,5 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 }
