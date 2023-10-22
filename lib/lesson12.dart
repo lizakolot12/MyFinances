@@ -49,7 +49,24 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Row(
+          children: [
+            Text(
+              widget.title,
+            ),
+            Spacer(),
+            StreamBuilder<int>(
+                stream: repository.count,
+                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text('Total: ${snapshot.data}');
+                  } else {
+                    return const Text("sdj");
+                  }
+                },
+            ),
+          ],
+        ),
       ),
       body: FutureBuilder(
         future: repository.fetchTasks(),
