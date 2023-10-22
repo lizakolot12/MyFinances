@@ -29,13 +29,27 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   late MockRepository repository;
+  late AnimationController controller;
+  late Animation<double> curvedAnimation;
 
   @override
   void initState() {
-    repository = MockRepository(MockAPI());
     super.initState();
+    repository = MockRepository(MockAPI());
+
+    controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      // reverseDuration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    curvedAnimation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.bounceInOut,
+      reverseCurve: Curves.easeOut,
+    );
   }
 
   void remove(int index) {
@@ -54,16 +68,41 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               widget.title,
             ),
-            Spacer(),
+            const Spacer(),
             StreamBuilder<int>(
-                stream: repository.count,
-                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                  if (snapshot.hasData) {
-                    return Text('Total: ${snapshot.data}');
-                  } else {
-                    return const Text("sdj");
-                  }
-                },
+              stream: repository.count,
+              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                if (snapshot.hasData) {
+
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) {
+                      return ScaleTransition(
+                          scale: animation,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(1.0, 0.0),
+                              end: const Offset(0.0, 0.0),
+                            ).animate(animation),
+                            child: FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
+                          ));
+                    },
+                    child: Text(
+                      style:  const TextStyle(
+                        fontSize: 18,
+                      ),
+                      'Total: ${snapshot.data}',
+                      key: ValueKey<int>(snapshot.data ?? 0),
+                    ),
+                  );
+                } else {
+                  return const Text("");
+                }
+              },
             ),
           ],
         ),
@@ -174,5 +213,11 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
