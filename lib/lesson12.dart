@@ -42,6 +42,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void addTask(String title) {
+    setState(() {
+      repository.addTask(title);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 setState(
                   () {
                     if (valueText != null) {
-                      repository.addTask(valueText ?? "");
+                      addTask(valueText ?? "");
                       Navigator.pop(context);
                     }
                   },
