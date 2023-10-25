@@ -5,10 +5,16 @@ import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_study/state_managment.dart';
 import 'theme_extensions.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MyAppSettings(
+      locale: const Locale('en'),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -99,7 +105,6 @@ class _MainPageState extends State<MainPage> {
   final List<Transaction> list = TransactionRepository().getAll();
   int selectedIndex = 0;
   bool stretch = true;
-  Locale? myLocale;
 
   void addNew() {
     //for future screen
@@ -112,18 +117,6 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  //тільки для прикладу.В готовому застосунку ручної зміни мови не буде.
-  void toggleLanguage() {
-    setState(() {
-      Locale current = myLocale ??= Localizations.localeOf(context);
-      if (current == const Locale('en')) {
-        myLocale = const Locale('uk');
-      } else {
-        myLocale = const Locale('en');
-      }
-    });
-  }
-
   void remove(int index) {
     setState(() {
       list.removeAt(index);
@@ -132,10 +125,9 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    myLocale ??= Localizations.localeOf(context);
     return Localizations.override(
       context: context,
-      locale: myLocale,
+      locale: MyAppSettings.of(context).locale(),
       child: Builder(
         builder: (context) {
           return DefaultTabController(
@@ -152,7 +144,13 @@ class _MainPageState extends State<MainPage> {
                   IconButton(
                     icon: const Icon(Icons.language),
                     tooltip: 'Toggle language',
-                    onPressed: toggleLanguage,
+                    onPressed: () => {
+                      setState(
+                        () {
+                          MyAppSettings.of(context).toggleLanguage();
+                        },
+                      )
+                    },
                   )
                 ],
               ),
@@ -193,15 +191,15 @@ class _MainPageState extends State<MainPage> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth > 600) {
-          return gridSliver();
+          return gridSliver(context);
         } else {
-          return listSliver();
+          return listSliver(context);
         }
       },
     );
   }
 
-  Widget listSliver() {
+  Widget listSliver(BuildContext context) {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: <Widget>[
@@ -245,7 +243,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget gridSliver() {
+  Widget gridSliver(BuildContext context) {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: <Widget>[
