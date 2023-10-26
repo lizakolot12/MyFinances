@@ -5,7 +5,7 @@ import 'package:my_study/data/data.dart';
 import 'package:my_study/items.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:my_study/state_managment.dart';
+import 'package:my_study/provider_state_managment.dart';
 import 'package:provider/provider.dart';
 import 'theme_extensions.dart';
 
@@ -49,34 +49,36 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Settings>(builder: (context, settings, child) {
-      return MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'),
-          Locale('uk'),
-        ],
-        themeMode: settings.isLight ? ThemeMode.light : ThemeMode.dark,
-        theme: ThemeData(
-          colorScheme: getLightColors(),
-          textTheme: getTextTheme(),
-          brightness: Brightness.light,
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          textTheme: getTextTheme(),
-          colorScheme: getDarkColors(),
-          useMaterial3: true,
-          brightness: Brightness.dark,
-        ),
-        home: MainPage(),
-      );
-    });
+    return Selector<Settings, bool>(
+        selector: (_, provider) => provider.isLight,
+        builder: (context, isLight, child) {
+          return MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('uk'),
+            ],
+            themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
+            theme: ThemeData(
+              colorScheme: getLightColors(),
+              textTheme: getTextTheme(),
+              brightness: Brightness.light,
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              textTheme: getTextTheme(),
+              colorScheme: getDarkColors(),
+              useMaterial3: true,
+              brightness: Brightness.dark,
+            ),
+            home: const MainPage(),
+          );
+        });
   }
 }
 
@@ -131,13 +133,7 @@ class _MainPageState extends State<MainPage> {
                     IconButton(
                       icon: const Icon(Icons.language),
                       tooltip: 'Toggle language',
-                      onPressed: () => {
-                        setState(
-                          () {
-                            settings.toggleLanguage();
-                          },
-                        )
-                      },
+                      onPressed: () => settings.toggleLanguage(),
                     )
                   ],
                 ),

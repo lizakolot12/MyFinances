@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 class Settings extends ChangeNotifier {
-  Locale _locale = Locale('en');
+  Locale _locale = const Locale('en');
   bool _isLight = false;
 
   Settings(this._locale, this._isLight);
