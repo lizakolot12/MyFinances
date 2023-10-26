@@ -6,32 +6,20 @@ import 'package:my_study/items.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:my_study/state_managment.dart';
+import 'package:provider/provider.dart';
 import 'theme_extensions.dart';
 
 void main() {
   runApp(
-    MyAppSettings(
-      locale: const Locale('en'),
+    ChangeNotifierProvider(
+      create: (context) => Settings(const Locale('en'), true),
       child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MyApp> {
-  bool isLight = true;
-
-  void toggleTheme() {
-    setState(() {
-      isLight = !isLight;
-    });
-  }
 
   ColorScheme getLightColors() {
     return ColorScheme.fromSeed(
@@ -61,41 +49,39 @@ class _MainAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('uk'),
-      ],
-      themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
-      theme: ThemeData(
-        colorScheme: getLightColors(),
-        textTheme: getTextTheme(),
-        brightness: Brightness.light,
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        textTheme: getTextTheme(),
-        colorScheme: getDarkColors(),
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-      home: MainPage(
-        handleBrightnessChange: toggleTheme,
-      ),
-    );
+    return Consumer<Settings>(builder: (context, settings, child) {
+      return MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('uk'),
+        ],
+        themeMode: settings.isLight ? ThemeMode.light : ThemeMode.dark,
+        theme: ThemeData(
+          colorScheme: getLightColors(),
+          textTheme: getTextTheme(),
+          brightness: Brightness.light,
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          textTheme: getTextTheme(),
+          colorScheme: getDarkColors(),
+          useMaterial3: true,
+          brightness: Brightness.dark,
+        ),
+        home: MainPage(),
+      );
+    });
   }
 }
 
 class MainPage extends StatefulWidget {
-  final void Function() handleBrightnessChange;
-
-  const MainPage({required this.handleBrightnessChange, super.key});
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -125,66 +111,68 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Localizations.override(
-      context: context,
-      locale: MyAppSettings.of(context).locale(),
-      child: Builder(
-        builder: (context) {
-          return DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text(AppLocalizations.of(context)!.title),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.ac_unit),
-                    tooltip: 'Toggle theme',
-                    onPressed: () => widget.handleBrightnessChange(),
+    return Consumer<Settings>(builder: (context, settings, child) {
+      return Localizations.override(
+        context: context,
+        locale: settings.locale,
+        child: Builder(
+          builder: (context) {
+            return DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(AppLocalizations.of(context)!.title),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.ac_unit),
+                      tooltip: 'Toggle theme',
+                      onPressed: () => settings.toggleLightness(),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.language),
+                      tooltip: 'Toggle language',
+                      onPressed: () => {
+                        setState(
+                          () {
+                            settings.toggleLanguage();
+                          },
+                        )
+                      },
+                    )
+                  ],
+                ),
+                body: selectedIndex == 0 ? buildBody() : buildStack(),
+                floatingActionButton: FloatingActionButton(
+                  tooltip: 'Add new',
+                  onPressed: addNew,
+                  child: const Icon(
+                    Icons.add,
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.language),
-                    tooltip: 'Toggle language',
-                    onPressed: () => {
-                      setState(
-                        () {
-                          MyAppSettings.of(context).toggleLanguage();
-                        },
-                      )
-                    },
-                  )
-                ],
-              ),
-              body: selectedIndex == 0 ? buildBody() : buildStack(),
-              floatingActionButton: FloatingActionButton(
-                tooltip: 'Add new',
-                onPressed: addNew,
-                child: const Icon(
-                  Icons.add,
+                ),
+                bottomNavigationBar: BottomNavigationBar(
+                  items: <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: const Icon(
+                        Icons.home,
+                      ),
+                      label: AppLocalizations.of(context)!.currents,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(
+                        Icons.business,
+                      ),
+                      label: AppLocalizations.of(context)!.reports,
+                    ),
+                  ],
+                  currentIndex: selectedIndex,
+                  onTap: onItemTapped,
                 ),
               ),
-              bottomNavigationBar: BottomNavigationBar(
-                items: <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: const Icon(
-                      Icons.home,
-                    ),
-                    label: AppLocalizations.of(context)!.currents,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(
-                      Icons.business,
-                    ),
-                    label: AppLocalizations.of(context)!.reports,
-                  ),
-                ],
-                currentIndex: selectedIndex,
-                onTap: onItemTapped,
-              ),
-            ),
-          );
-        },
-      ),
-    );
+            );
+          },
+        ),
+      );
+    });
   }
 
   Widget buildBody() {

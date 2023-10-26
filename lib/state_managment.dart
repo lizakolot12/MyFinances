@@ -1,32 +1,28 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
-class MyAppSettings extends InheritedWidget {
-  final ValueNotifier<Locale> _localeNotifier;
+class Settings extends ChangeNotifier {
+  Locale _locale = Locale('en');
+  bool _isLight = false;
 
-  MyAppSettings({
-    super.key,
-    required Widget child,
-    required Locale locale,
-  })  : _localeNotifier = ValueNotifier<Locale>(locale),
-        super(child: child);
+  Settings(this._locale, this._isLight);
 
-  static MyAppSettings of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<MyAppSettings>()!;
-  }
-
-  @override
-  bool updateShouldNotify(covariant MyAppSettings oldWidget) {
-    return oldWidget._localeNotifier.value != _localeNotifier.value;
-  }
+  Locale get locale => _locale;
 
   void toggleLanguage() {
-    Locale current = _localeNotifier.value;
+    Locale current = _locale;
     if (current == const Locale('en')) {
-      _localeNotifier.value = const Locale('uk');
+      _locale = const Locale('uk');
     } else {
-      _localeNotifier.value = const Locale('en');
+      _locale = const Locale('en');
     }
+    notifyListeners();
   }
 
-  Locale locale() => _localeNotifier.value;
+  bool get isLight => _isLight;
+
+  void toggleLightness() {
+    _isLight = !isLight;
+    notifyListeners();
+  }
 }
