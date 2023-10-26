@@ -3,6 +3,14 @@ import 'package:flutter/widgets.dart';
 class Settings extends ChangeNotifier {
   Locale _locale = const Locale('en');
   bool _isLight = false;
+  int _selectedIndex = 0;
+
+  int get selectedIndex => _selectedIndex;
+
+  set selectedIndex(int value) {
+    _selectedIndex = value;
+    notifyListeners();
+  }
 
   Settings(this._locale, this._isLight);
 

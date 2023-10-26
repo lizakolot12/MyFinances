@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
-import 'package:my_study/data/data.dart';
-import 'package:my_study/items.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:my_study/provider_state_managment.dart';
-import 'package:provider/provider.dart';
-import 'theme_extensions.dart';
+import 'package:provider/provider.dart' as provider;
+import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
+import 'list_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
+    provider.ChangeNotifierProvider(
       create: (context) => Settings(const Locale('en'), true),
       child: const MyApp(),
     ),
@@ -49,7 +47,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<Settings, bool>(
+    return provider.Selector<Settings, bool>(
         selector: (_, provider) => provider.isLight,
         builder: (context, isLight, child) {
           return MaterialApp(
@@ -82,38 +80,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
+class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  final List<Transaction> list = TransactionRepository().getAll();
-  int selectedIndex = 0;
-  bool stretch = true;
-
-  void addNew() {
-    //for future screen
-    setState(() {});
-  }
-
-  void onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
-  void remove(int index) {
-    setState(() {
-      list.removeAt(index);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Consumer<Settings>(builder: (context, settings, child) {
+    return provider.Consumer<Settings>(builder: (context, settings, child) {
       return Localizations.override(
         context: context,
         locale: settings.locale,
@@ -137,10 +109,14 @@ class _MainPageState extends State<MainPage> {
                     )
                   ],
                 ),
-                body: selectedIndex == 0 ? buildBody() : buildStack(),
+                body: settings.selectedIndex == 0
+                    ? const riverpod.ProviderScope(
+                        child: ListScreen(),
+                      )
+                    : buildStack(),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add new',
-                  onPressed: addNew,
+                  onPressed: () => {},
                   child: const Icon(
                     Icons.add,
                   ),
@@ -160,8 +136,8 @@ class _MainPageState extends State<MainPage> {
                       label: AppLocalizations.of(context)!.reports,
                     ),
                   ],
-                  currentIndex: selectedIndex,
-                  onTap: onItemTapped,
+                  currentIndex: settings.selectedIndex,
+                  onTap: (index) => settings.selectedIndex = index,
                 ),
               ),
             );
@@ -169,94 +145,6 @@ class _MainPageState extends State<MainPage> {
         ),
       );
     });
-  }
-
-  Widget buildBody() {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth > 600) {
-          return gridSliver(context);
-        } else {
-          return listSliver(context);
-        }
-      },
-    );
-  }
-
-  Widget listSliver(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: <Widget>[
-        SliverAppBar(
-          stretch: stretch,
-          stretchTriggerOffset: 100.0,
-          expandedHeight: 100.0,
-          flexibleSpace: FlexibleSpaceBar(
-            title: Text(
-              AppLocalizations.of(context)!.mainDesription,
-              style: Theme.of(context).mySpecialTextStyle,
-            ),
-            background: Image.asset(
-              "assets/images/cake.png",
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        buildSliverList(),
-      ],
-    );
-  }
-
-  Widget buildSliverList() {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return Dismissible(
-            key: Key(list[index].name),
-            onDismissed: (direction) {
-              remove(index);
-            },
-            child: TransactionItem(
-              transaction: list[index],
-              key: UniqueKey(),
-            ),
-          );
-        },
-        childCount: list.length,
-      ),
-    );
-  }
-
-  Widget gridSliver(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: <Widget>[
-        buildSliverGrid(),
-      ],
-    );
-  }
-
-  Widget buildSliverGrid() {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return Container(
-            alignment: Alignment.center,
-            child: TransactionGridItem(
-              transaction: list[index],
-              key: UniqueKey(),
-            ),
-          );
-        },
-        childCount: list.length,
-      ),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        childAspectRatio: (1 / .4),
-      ),
-    );
   }
 
   Widget buildStack() {
