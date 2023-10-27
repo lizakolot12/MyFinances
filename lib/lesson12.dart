@@ -37,15 +37,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void remove(int index) {
-    setState(() {
-      repository.removeTask(index);
-    });
+    repository.removeTask(index);
+    setState(() {});
   }
 
   void addTask(String title) {
-    setState(() {
-      repository.addTask(title);
-    });
+    repository.addTask(title);
+    setState(() {});
   }
 
   @override
@@ -105,23 +103,18 @@ class _MyHomePageState extends State<MyHomePage> {
               ListView.builder(
                 itemCount: snapshot.data?.length ?? 0,
                 itemBuilder: (context, index) => ListTile(
-                  title: Row(
-                    children: [
-                      Text(
-                        snapshot.data?[index].title ?? '',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      IconButton(
-                          disabledColor: Colors.black12,
-                          icon: const Icon(
-                            Icons.delete,
-                          ),
-                          onPressed: snapshot.data?[index].isProgress ?? false
-                              ? null
-                              : () => remove(index)),
-                    ],
+                  title: Text(
+                    snapshot.data?[index].title ?? '',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
+                  trailing: IconButton(
+                      disabledColor: Colors.black12,
+                      icon: const Icon(
+                        Icons.delete,
+                      ),
+                      onPressed: snapshot.data?[index].isProgress ?? false
+                          ? null
+                          : () => remove(index)),
                 ),
               ),
               if (snapshot.connectionState == ConnectionState.waiting)
