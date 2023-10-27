@@ -1,6 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/widgets.dart';
-
 class Transaction {
   final int _id;
   final String _name;
@@ -25,11 +22,7 @@ class Transaction {
   }
 }
 
-final repositoryProvider = ChangeNotifierProvider<TransactionRepository>((ref) {
-  return TransactionRepository();
-});
-
-class TransactionRepository extends ChangeNotifier {
+class TransactionRepository {
   static final List<Transaction> _transactions = [
     Transaction(
         1, "магазин", 200, ["солодощі", "овочі", "госп.товари", "канцелярія"]),
@@ -46,11 +39,9 @@ class TransactionRepository extends ChangeNotifier {
     return _transactions;
   }
 
-  Future<void> remove(int index) async {
-    _transactions[index].isProgress = true;
-    notifyListeners();
+  Future<void> remove(Transaction transaction) async {
     await Future.delayed(const Duration(seconds: 1));
-    _transactions.removeAt(index);
-    notifyListeners();
+    _transactions.removeWhere((item) => item.id == transaction.id);
+    return;
   }
 }

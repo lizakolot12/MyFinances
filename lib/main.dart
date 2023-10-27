@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_study/data/transaction_bloc.dart';
 import 'package:my_study/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
-import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
 import 'list_screen.dart';
 
 void main() {
@@ -110,8 +111,9 @@ class MainPage extends StatelessWidget {
                   ],
                 ),
                 body: settings.selectedIndex == 0
-                    ? const riverpod.ProviderScope(
-                        child: ListScreen(),
+                    ? BlocProvider(
+                        create: (context) => TransactionBloc(),
+                        child: const ListScreen(),
                       )
                     : buildStack(),
                 floatingActionButton: FloatingActionButton(

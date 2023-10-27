@@ -1,50 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'data/data.dart';
+import 'data/transaction_bloc.dart';
 
-class ListScreen extends ConsumerWidget {
+class ListScreen extends StatelessWidget {
   const ListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final repository = ref.watch(repositoryProvider);
-    return FutureBuilder(
-      future: repository.getAll(),
-      builder: (_, AsyncSnapshot<List<Transaction>> snapshot) {
-        if (snapshot.hasData) {
-          var list = snapshot.data;
+  Widget build(BuildContext context) {
+    return BlocBuilder<TransactionBloc, TransactionState>(
+      builder: (context, state) {
+        if (state is TransactionInitial) {
+          context.read<TransactionBloc>().add(
+                GetAll(),
+              );
+          return progress();
+        } else if (state is LoadedTransaction) {
+          List<Transaction> list = state.transactions;
+          return buildList(list);
+        } else if (state is LoadingTransaction) {
+          List<Transaction> list = state.transactions;
           return Stack(
             children: [
-              ListView.builder(
-                itemCount: list?.length ?? 0,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(
-                    list?[index].name ?? '',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  subtitle: Text(
-                    list?[index].total.toString() ?? '',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  trailing: IconButton(
-                    disabledColor: Colors.black12,
-                    icon: const Icon(
-                      Icons.delete,
-                    ),
-                    onPressed: list?[index].isProgress ?? false
-                        ? null
-                        : () => repository.remove(index),
-                  ),
-                ),
-              ),
-              if (snapshot.connectionState == ConnectionState.waiting)
-                progress()
+              buildList(list),
+              progress(),
             ],
           );
         } else {
           return progress();
         }
       },
+    );
+  }
+
+  Widget buildList(List<Transaction> list) {
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (context, index) => ListTile(
+        title: Text(
+          list[index].name,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        subtitle: Text(
+          list[index].total.toString(),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        trailing: IconButton(
+          disabledColor: Colors.black12,
+          icon: const Icon(
+            Icons.delete,
+          ),
+          onPressed: list[index].isProgress
+              ? null
+              : () => context.read<TransactionBloc>().add(
+                    Remove(list[index]),
+                  ),
+        ),
+      ),
     );
   }
 
