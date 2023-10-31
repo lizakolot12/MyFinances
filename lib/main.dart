@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:my_study/data/transaction_bloc.dart';
 import 'package:my_study/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
+import 'data/data.dart';
 import 'list_screen.dart';
 
 void main() {
@@ -111,10 +112,15 @@ class MainPage extends StatelessWidget {
                   ],
                 ),
                 body: settings.selectedIndex == 0
-                    ? BlocProvider(
-                        create: (context) => TransactionBloc(),
-                        child: const ListScreen(),
-                      )
+                    ? RepositoryProvider(
+                        create: (context) => TransactionRepository(),
+                        child: BlocProvider(
+                          create: (context) => TransactionListBloc(
+                              repository:
+                                  RepositoryProvider.of<TransactionRepository>(
+                                      context)),
+                          child: const ListScreen(),
+                        ))
                     : buildStack(),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add new',

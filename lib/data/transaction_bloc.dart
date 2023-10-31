@@ -6,21 +6,26 @@ part 'transaction_event.dart';
 
 part 'transaction_state.dart';
 
-class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
-  final TransactionRepository _repository = TransactionRepository();
+class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
+  final TransactionRepository _repository;
   List<Transaction> saved = List.empty();
 
-  TransactionBloc() : super(TransactionInitial()) {
-    on<GetAll>(
+  TransactionListBloc({
+    required TransactionRepository repository,
+  })  : _repository = repository,
+        super(TransactionInitial()) {
+    on<GetAllTransactions>(
       (event, emit) async {
+        emit(LoadingTransaction(saved));
         List<Transaction> list = await _repository.getAll();
         saved = list;
         emit(LoadedTransaction(list));
       },
     );
 
-    on<Remove>(
+    on<RemoveTransaction>(
       (event, emit) async {
+        emit(LoadingTransaction(saved));
         Transaction transaction = event.transaction;
         saved = saved.map((item) {
           if (item.id == transaction.id) {
@@ -30,7 +35,6 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
             return item;
           }
         }).toList();
-        emit(LoadingTransaction(saved));
         await _repository.remove(transaction);
         saved = await _repository.getAll();
         emit(LoadedTransaction(saved));

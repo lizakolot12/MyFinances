@@ -9,11 +9,11 @@ class ListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionBloc, TransactionState>(
+    return BlocBuilder<TransactionListBloc, TransactionState>(
       builder: (context, state) {
         if (state is TransactionInitial) {
-          context.read<TransactionBloc>().add(
-                GetAll(),
+          context.read<TransactionListBloc>().add(
+                GetAllTransactions(),
               );
           return progress();
         } else if (state is LoadedTransaction) {
@@ -53,8 +53,8 @@ class ListScreen extends StatelessWidget {
           ),
           onPressed: list[index].isProgress
               ? null
-              : () => context.read<TransactionBloc>().add(
-                    Remove(list[index]),
+              : () => context.read<TransactionListBloc>().add(
+                    RemoveTransaction(list[index]),
                   ),
         ),
       ),

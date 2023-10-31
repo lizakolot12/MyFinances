@@ -3,10 +3,10 @@ part of 'transaction_bloc.dart';
 @immutable
 abstract class TransactionEvent {}
 
-class GetAll extends TransactionEvent {}
+class GetAllTransactions extends TransactionEvent {}
 
-class Remove extends TransactionEvent {
+class RemoveTransaction extends TransactionEvent {
   late final Transaction transaction;
 
-  Remove(this.transaction);
+  RemoveTransaction(this.transaction);
 }
