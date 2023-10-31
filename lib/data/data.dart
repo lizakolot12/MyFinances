@@ -3,6 +3,7 @@ class Transaction {
   final String _name;
   final int _total;
   final List<String>? _tags;
+  bool _isProgress = false;
 
   Transaction(this._id, this._name, this._total, this._tags);
 
@@ -13,24 +14,34 @@ class Transaction {
   String get name => _name;
 
   int get id => _id;
+
+  bool get isProgress => _isProgress;
+
+  set isProgress(bool value) {
+    _isProgress = value;
+  }
 }
 
 class TransactionRepository {
-  final List<Transaction> _transactions = [];
+  static final List<Transaction> _transactions = [
+    Transaction(
+        1, "магазин", 200, ["солодощі", "овочі", "госп.товари", "канцелярія"]),
+    Transaction(2, "комуналка", 2000, null),
+    Transaction(3, "оренда", 3000, null),
+    Transaction(4, "магазин", 2530, null),
+    Transaction(5, "кіно", 2530, null),
+    Transaction(6, "театр", 2150, null),
+    Transaction(7, "фітнес", 2850, null),
+  ];
 
-  List<Transaction> getAll() {
+  Future<List<Transaction>> getAll() async {
+    await Future.delayed(const Duration(seconds: 1));
     return _transactions;
   }
 
-  TransactionRepository() {
-    _transactions.add(Transaction(1, "магазин", 200, ["солодощі", "овочі", "госп.товари", "канцелярія"]));
-    _transactions.add(Transaction(2, "комуналка", 2000, null));
-    _transactions.add(Transaction(3, "оренда", 3000, null));
-    _transactions.add(Transaction(4, "продукти", 2530, null));
-    _transactions.add(Transaction(5, "продукти", 2530, null));
-    _transactions.add(Transaction(6, "продукти", 2150, null));
-    _transactions.add(Transaction(7, "продукти", 2850, null));
-    _transactions.add(Transaction(8, "продукти", 2530, null));
-    _transactions.add(Transaction(9, "продукти", 2520, null));
+  Future<void> remove(Transaction transaction) async {
+    await Future.delayed(const Duration(seconds: 1));
+    _transactions.removeWhere((item) => item.id == transaction.id);
+    return;
   }
 }
