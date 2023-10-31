@@ -10,9 +10,8 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
   final TransactionRepository _repository;
   List<Transaction> saved = List.empty();
 
-  TransactionListBloc({
-    required TransactionRepository repository,
-  })  : _repository = repository,
+  TransactionListBloc({required TransactionRepository repository})
+      : _repository = repository,
         super(TransactionInitial()) {
     on<GetAllTransactions>(
       (event, emit) async {
