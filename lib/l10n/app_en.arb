@@ -11,8 +11,12 @@
   "@currents": {
     "description": "The name of current page"
   },
-  "reports": "Reposrts",
+  "reports": "Reports",
   "@reports": {
     "description": "The name of report page"
-  }
+  },
+  "edit_title": "Input",
+  "label_name": "Name",
+  "label_total": "Total",
+  "label_save": "Save"
 }

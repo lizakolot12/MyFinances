@@ -1,7 +1,9 @@
+import 'dart:math';
+
 class Transaction {
   final int _id;
   final String _name;
-  final int _total;
+  final double _total;
   final List<String>? _tags;
   bool _isProgress = false;
 
@@ -9,7 +11,7 @@ class Transaction {
 
   List<String>? get tags => _tags;
 
-  int get total => _total;
+  double get total => _total;
 
   String get name => _name;
 
@@ -33,6 +35,10 @@ class TransactionRepository {
     Transaction(6, "театр", 2150, null),
     Transaction(7, "фітнес", 2850, null),
   ];
+  Future<Transaction> getById(int id) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return _transactions.firstWhere((element) => element.id == id);
+  }
 
   Future<List<Transaction>> getAll() async {
     await Future.delayed(const Duration(seconds: 1));
@@ -43,5 +49,21 @@ class TransactionRepository {
     await Future.delayed(const Duration(seconds: 1));
     _transactions.removeWhere((item) => item.id == transaction.id);
     return;
+  }
+
+  Future<Transaction> get(int id) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return _transactions.firstWhere((item) => item.id == id);
+  }
+
+  Future<void> edit(Transaction transaction) async {
+    await Future.delayed(const Duration(seconds: 1));
+    _transactions.removeWhere((item) => item.id == transaction.id);
+    _transactions.add(transaction);
+  }
+
+  Future<void> create(String name, double total) async {
+    await Future.delayed(const Duration(seconds: 1));
+    _transactions.add(Transaction(Random().nextInt(1000), name, total, List.empty()));
   }
 }

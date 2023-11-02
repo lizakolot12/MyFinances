@@ -7,6 +7,9 @@ import 'package:my_study/data/transaction_bloc.dart';
 import 'package:my_study/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
 import 'data/data.dart';
+import 'data/item_bloc.dart';
+import 'edit_screen.dart';
+import 'item_screen.dart';
 import 'list_screen.dart';
 
 void main() {
@@ -124,7 +127,22 @@ class MainPage extends StatelessWidget {
                     : buildStack(),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add new',
-                  onPressed: () => {},
+                  onPressed: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RepositoryProvider(
+                              create: (context) => TransactionRepository(),
+                              child: BlocProvider(
+                                create: (context) => TransactionItemBloc(
+                                    repository: RepositoryProvider.of<
+                                        TransactionRepository>(context)),
+                                child: EditScreen(transaction: null),
+                                /*transaction:
+                                        Transaction(1, "d", 34, List.empty())),*/
+                              ))),
+                    )
+                  },
                   child: const Icon(
                     Icons.add,
                   ),

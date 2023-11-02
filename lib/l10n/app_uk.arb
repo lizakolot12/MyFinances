@@ -2,5 +2,9 @@
   "title": "Мої витрати",
   "mainDesription": "Що було куплено нещодавно",
   "currents": "Поточні",
-  "reports": "Звіти"
+  "reports": "Звіти",
+  "edit_title": "Ввід даних",
+  "label_name": "Назва",
+  "label_total": "Сума",
+  "label_save": "Зберегти"
 }
