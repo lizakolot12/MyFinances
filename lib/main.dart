@@ -114,8 +114,9 @@ class MainPage extends StatelessWidget {
                     )
                   ],
                 ),
-                body: settings.selectedIndex == 0
-                    ? RepositoryProvider(
+                body: TabBarView(
+                  children: [
+                    RepositoryProvider(
                         create: (context) => TransactionRepository(),
                         child: BlocProvider(
                           create: (context) => TransactionListBloc(
@@ -123,8 +124,10 @@ class MainPage extends StatelessWidget {
                                   RepositoryProvider.of<TransactionRepository>(
                                       context)),
                           child: const ListScreen(),
-                        ))
-                    : buildStack(),
+                        )),
+                    buildStack()
+                  ],
+                ),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add new',
                   onPressed: () => {
@@ -147,23 +150,21 @@ class MainPage extends StatelessWidget {
                     Icons.add,
                   ),
                 ),
-                bottomNavigationBar: BottomNavigationBar(
-                  items: <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
+                bottomNavigationBar: TabBar(
+                  tabs: [
+                    Tab(
                       icon: const Icon(
                         Icons.home,
                       ),
-                      label: AppLocalizations.of(context)!.currents,
+                      text: AppLocalizations.of(context)!.currents,
                     ),
-                    BottomNavigationBarItem(
+                    Tab(
                       icon: const Icon(
                         Icons.business,
                       ),
-                      label: AppLocalizations.of(context)!.reports,
-                    ),
+                      text: AppLocalizations.of(context)!.reports,
+                    )
                   ],
-                  currentIndex: settings.selectedIndex,
-                  onTap: (index) => settings.selectedIndex = index,
                 ),
               ),
             );
