@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_study/provider_state_managment.dart';
+import 'package:provider/provider.dart';
 
 import 'data/data.dart';
 
@@ -26,40 +28,48 @@ class _EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.edit_title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: nameController,
-              decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.label_name),
+    return Consumer<Settings>(builder: (context, settings, child) {
+      return Localizations.override(
+        context: context,
+        locale: settings.locale,
+        child: Builder(builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.edit_title),
             ),
-            TextFormField(
-              controller: amountController,
-              decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.label_total),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                String name = nameController.text;
-                String amount = amountController.text;
-                // Ваша логіка збереження даних
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.label_name),
+                  ),
+                  TextFormField(
+                    controller: amountController,
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.label_total),
+                    keyboardType: TextInputType.number,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      String name = nameController.text;
+                      String amount = amountController.text;
+                      // Ваша логіка збереження даних
 
-                nameController.clear();
-                amountController.clear();
-              },
-              child: Text(AppLocalizations.of(context)!.label_save),
+                      nameController.clear();
+                      amountController.clear();
+                    },
+                    child: Text(AppLocalizations.of(context)!.label_save),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        }),
+      );
+    });
   }
 
   @override
