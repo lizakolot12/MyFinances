@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:my_study/data/transaction_bloc.dart';
 import 'package:my_study/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
 import 'data/data.dart';
-import 'data/item_bloc.dart';
-import 'edit_screen.dart';
+import 'error_screen.dart';
 import 'item_screen.dart';
 import 'list_screen.dart';
 
@@ -16,13 +16,13 @@ void main() {
   runApp(
     provider.ChangeNotifierProvider(
       create: (context) => Settings(const Locale('en'), true),
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   ColorScheme getLightColors() {
     return ColorScheme.fromSeed(
@@ -50,12 +50,36 @@ class MyApp extends StatelessWidget {
     );
   }
 
+  final GoRouter _router = GoRouter(
+    routes: [
+      GoRoute(
+        path: "/",
+        builder: (context, state) => const MainPage(),
+        routes: [
+          GoRoute(
+            path: "edit/:id",
+            builder: (context, state) => ItemScreen(
+              transactionId: int.parse(state.pathParameters['id']!),
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: "/new",
+        builder: (context, state) => const ItemScreen(transactionId: null),
+      ),
+    ],
+    errorBuilder: (context, state) => const ErrorScreen(),
+  );
+
   @override
   Widget build(BuildContext context) {
     return provider.Selector<Settings, bool>(
         selector: (_, provider) => provider.isLight,
         builder: (context, isLight, child) {
-          return MaterialApp(
+          return MaterialApp.router(
+            routerConfig: _router,
+            title: "Go router",
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -79,7 +103,6 @@ class MyApp extends StatelessWidget {
               useMaterial3: true,
               brightness: Brightness.dark,
             ),
-            home: const MainPage(),
           );
         });
   }
@@ -114,8 +137,9 @@ class MainPage extends StatelessWidget {
                     )
                   ],
                 ),
-                body: settings.selectedIndex == 0
-                    ? RepositoryProvider(
+                body: TabBarView(
+                  children: [
+                    RepositoryProvider(
                         create: (context) => TransactionRepository(),
                         child: BlocProvider(
                           create: (context) => TransactionListBloc(
@@ -123,47 +147,34 @@ class MainPage extends StatelessWidget {
                                   RepositoryProvider.of<TransactionRepository>(
                                       context)),
                           child: const ListScreen(),
-                        ))
-                    : buildStack(),
+                        )),
+                    buildStack()
+                  ],
+                ),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add new',
                   onPressed: () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RepositoryProvider(
-                              create: (context) => TransactionRepository(),
-                              child: BlocProvider(
-                                create: (context) => TransactionItemBloc(
-                                    repository: RepositoryProvider.of<
-                                        TransactionRepository>(context)),
-                                child: EditScreen(transaction: null),
-                                /*transaction:
-                                        Transaction(1, "d", 34, List.empty())),*/
-                              ))),
-                    )
+                    context.go("/new"),
                   },
                   child: const Icon(
                     Icons.add,
                   ),
                 ),
-                bottomNavigationBar: BottomNavigationBar(
-                  items: <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
+                bottomNavigationBar: TabBar(
+                  tabs: [
+                    Tab(
                       icon: const Icon(
                         Icons.home,
                       ),
-                      label: AppLocalizations.of(context)!.currents,
+                      text: AppLocalizations.of(context)!.currents,
                     ),
-                    BottomNavigationBarItem(
+                    Tab(
                       icon: const Icon(
                         Icons.business,
                       ),
-                      label: AppLocalizations.of(context)!.reports,
-                    ),
+                      text: AppLocalizations.of(context)!.reports,
+                    )
                   ],
-                  currentIndex: settings.selectedIndex,
-                  onTap: (index) => settings.selectedIndex = index,
                 ),
               ),
             );
