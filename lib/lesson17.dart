@@ -1,19 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:my_study/util12.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:my_study/util17.dart';
 
-class Lesson12 extends StatelessWidget {
-  const Lesson12({super.key});
+class Lesson17 extends StatelessWidget {
+  const Lesson17({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Future vs Stream',
+      title: 'DIO',
       theme: ThemeData.light().copyWith(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Lesson12'),
+      home: const MyHomePage(title: 'Lesson17'),
     );
   }
 }
@@ -28,21 +29,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late MockRepository repository;
+  late PostRepository repository;
 
   @override
   void initState() {
     super.initState();
-    repository = MockRepository(MockAPI());
+    repository = PostRepository(DioClient());
   }
 
-  void remove(int index) {
-    repository.removeTask(index);
+  void remove(int userId) {
+    repository.removePost(userId);
     setState(() {});
   }
 
   void addTask(String title) {
-    repository.addTask(title);
+    repository.addPost(title);
     setState(() {});
   }
 
@@ -95,42 +96,65 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: FutureBuilder(
-        future: repository.fetchTasks(),
-        builder: (_, AsyncSnapshot<List<Task>> snapshot) {
-          if (snapshot.hasData) {
-            return Stack(children: [
-              ListView.builder(
-                itemCount: snapshot.data?.length ?? 0,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(
-                    snapshot.data?[index].title ?? '',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  trailing: IconButton(
-                      disabledColor: Colors.black12,
-                      icon: const Icon(
-                        Icons.delete,
-                      ),
-                      onPressed: snapshot.data?[index].isProgress ?? false
-                          ? null
-                          : () => remove(index)),
-                ),
-              ),
-              if (snapshot.connectionState == ConnectionState.waiting)
-                progress()
-            ]);
-          } else {
-            return progress();
-          }
-        },
-      ),
+      body: LiquidPullToRefresh(
+          onRefresh: () {
+            return Future(() {
+              setState(() {});
+            });
+          },
+          child: FutureBuilder(
+            future: repository.fetchPosts(),
+            builder: (_, AsyncSnapshot<ListState> snapshot) {
+              if (snapshot.hasData) {
+                return Stack(
+                  children: [
+                    buildListView(snapshot),
+                    if (snapshot.data?.error != null) buildErrorView(snapshot),
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      progress()
+                  ],
+                );
+              } else {
+                return progress();
+              }
+            },
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           displayTextInputDialog(context);
         },
-        tooltip: 'New task',
+        tooltip: 'New post',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget buildErrorView(AsyncSnapshot<ListState> snapshot) {
+    print("error view");
+    return Center(
+        child: Text(
+      snapshot.data?.error ?? "",
+      style: Theme.of(context).textTheme.titleMedium,
+    ));
+  }
+
+  ListView buildListView(AsyncSnapshot<ListState> snapshot) {
+    print("build list");
+    return ListView.builder(
+      itemCount: snapshot.data?.list.length ?? 0,
+      itemBuilder: (context, index) => ListTile(
+        title: Text(
+          snapshot.data?.list[index].title ?? '',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        trailing: IconButton(
+            disabledColor: Colors.black12,
+            icon: const Icon(
+              Icons.delete,
+            ),
+            onPressed: snapshot.data?.list[index].isProgress ?? false
+                ? null
+                : () => remove(snapshot.data?.list[index].id ?? 0)),
       ),
     );
   }
