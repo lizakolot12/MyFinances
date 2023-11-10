@@ -25,6 +25,9 @@ class Transaction {
 }
 
 class TransactionRepository {
+  TransactionRepository(){
+    print(this);
+  }
   static final List<Transaction> _transactions = [
     Transaction(
         1, "магазин", 200, ["солодощі", "овочі", "госп.товари", "канцелярія"]),
