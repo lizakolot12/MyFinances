@@ -62,11 +62,11 @@ class MyApp extends StatelessWidget {
               transactionId: int.parse(state.pathParameters['id']!),
             ),
           ),
+          GoRoute(
+            path: "new",
+            builder: (context, state) => const ItemScreen(transactionId: null),
+          ),
         ],
-      ),
-      GoRoute(
-        path: "/new",
-        builder: (context, state) => const ItemScreen(transactionId: null),
       ),
     ],
     errorBuilder: (context, state) => const ErrorScreen(),

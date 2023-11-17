@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_study/item_screen.dart';
 import 'package:my_study/provider_state_managment.dart';
+import 'package:my_study/widgets.dart';
 import 'package:provider/provider.dart';
 import 'data/data.dart';
 import 'data/item_bloc.dart';
@@ -116,12 +116,15 @@ class EditForm extends StatefulWidget {
 class EditFormState extends State<EditForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
+  List<String> savedSelectedOptions = [];
+  List<String> allOptions = ['Комуналка', 'Продукти', 'Розваги'];
 
   @override
   void initState() {
     super.initState();
     nameController.text = widget.transaction?.name ?? "";
     amountController.text = widget.transaction?.total.toString() ?? "";
+    savedSelectedOptions = widget.transaction?.tags ?? [];
   }
 
   @override
@@ -139,13 +142,29 @@ class EditFormState extends State<EditForm> {
               labelText: AppLocalizations.of(context)!.label_total),
           keyboardType: TextInputType.number,
         ),
+        Expanded(
+            child: ChipInputWidget(
+          allOptions: allOptions,
+          onSelectedOptionsChanged: (selectedOptions) {
+            savedSelectedOptions = selectedOptions;
+          },
+          selectedOptions: savedSelectedOptions,
+        )),
         ElevatedButton(
           onPressed: () {
             String name = nameController.text;
             double amount = double.tryParse(amountController.text) ?? 0;
-            context.read<TransactionItemBloc>().add(
-                  CreateTransaction(name, amount),
-                );
+            if (widget.transaction == null) {
+              context.read<TransactionItemBloc>().add(
+                    CreateTransaction(name, amount, savedSelectedOptions),
+                  );
+            } else {
+              Transaction transaction = Transaction(widget.transaction?.id ?? 0,
+                  name, amount, savedSelectedOptions);
+              context.read<TransactionItemBloc>().add(
+                    SaveTransaction(transaction),
+                  );
+            }
           },
           child: Text(AppLocalizations.of(context)!.label_save),
         ),

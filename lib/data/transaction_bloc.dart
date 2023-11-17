@@ -15,10 +15,11 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
         super(TransactionInitial()) {
     on<GetAllTransactions>(
       (event, emit) async {
-        emit(LoadingTransaction(saved));
-        List<Transaction> list = await _repository.getAll();
-        saved = list;
-        emit(LoadedTransaction(list));
+        emit(LoadingTransaction(List.empty()));
+        await for (var list in _repository.getAll()) {
+          saved = list;
+          emit(LoadedTransaction(list));
+        }
       },
     );
 
@@ -35,8 +36,6 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
           }
         }).toList();
         await _repository.remove(transaction);
-        saved = await _repository.getAll();
-        emit(LoadedTransaction(saved));
       },
     );
   }
