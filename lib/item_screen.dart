@@ -11,16 +11,13 @@ class ItemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => TransactionRepository(),
-      child: BlocProvider(
+    return BlocProvider(
         create: (context) => TransactionItemBloc(
           repository: RepositoryProvider.of<TransactionRepository>(context),
         ),
         child: EditScreen(
           transactionId: transactionId,
         ),
-      ),
     );
   }
 }

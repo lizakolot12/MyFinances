@@ -77,33 +77,35 @@ class MyApp extends StatelessWidget {
     return provider.Selector<Settings, bool>(
         selector: (_, provider) => provider.isLight,
         builder: (context, isLight, child) {
-          return MaterialApp.router(
-            routerConfig: _router,
-            title: "Go router",
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('uk'),
-            ],
-            themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
-            theme: ThemeData(
-              colorScheme: getLightColors(),
-              textTheme: getTextTheme(),
-              brightness: Brightness.light,
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              textTheme: getTextTheme(),
-              colorScheme: getDarkColors(),
-              useMaterial3: true,
-              brightness: Brightness.dark,
-            ),
-          );
+          return RepositoryProvider(
+              create: (context) => TransactionRepository(),
+              child: MaterialApp.router(
+                routerConfig: _router,
+                title: "Go router",
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en'),
+                  Locale('uk'),
+                ],
+                themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
+                theme: ThemeData(
+                  colorScheme: getLightColors(),
+                  textTheme: getTextTheme(),
+                  brightness: Brightness.light,
+                  useMaterial3: true,
+                ),
+                darkTheme: ThemeData(
+                  textTheme: getTextTheme(),
+                  colorScheme: getDarkColors(),
+                  useMaterial3: true,
+                  brightness: Brightness.dark,
+                ),
+              ));
         });
   }
 }
@@ -139,15 +141,12 @@ class MainPage extends StatelessWidget {
                 ),
                 body: TabBarView(
                   children: [
-                    RepositoryProvider(
-                        create: (context) => TransactionRepository(),
-                        child: BlocProvider(
-                          create: (context) => TransactionListBloc(
-                              repository:
-                                  RepositoryProvider.of<TransactionRepository>(
-                                      context)),
-                          child: const ListScreen(),
-                        )),
+                    BlocProvider(
+                        create: (context) => TransactionListBloc(
+                            repository:
+                                RepositoryProvider.of<TransactionRepository>(
+                                    context)),
+                        child: const ListScreen()),
                     buildStack()
                   ],
                 ),
