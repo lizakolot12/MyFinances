@@ -10,21 +10,14 @@ import 'package:provider/provider.dart' as provider;
 import 'data/data.dart';
 import 'error_screen.dart';
 import 'item_screen.dart';
-import 'lesson17.dart';
 import 'list_screen.dart';
 
-/*void main() {
+void main() {
   runApp(
     provider.ChangeNotifierProvider(
       create: (context) => Settings(const Locale('en'), true),
       child: MyApp(),
     ),
-  );
-}*/
-
-void main() {
-  runApp(
-      const Lesson17()
   );
 }
 
