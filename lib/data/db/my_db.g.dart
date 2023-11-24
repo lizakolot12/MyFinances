@@ -28,8 +28,13 @@ class $TransactionItemsTable extends TransactionItems
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
       'total', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _pathMeta = const VerificationMeta('path');
   @override
-  List<GeneratedColumn> get $columns => [id, name, total];
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+      'path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, name, total, path];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -55,6 +60,12 @@ class $TransactionItemsTable extends TransactionItems
     } else if (isInserting) {
       context.missing(_totalMeta);
     }
+    if (data.containsKey('path')) {
+      context.handle(
+          _pathMeta, path.isAcceptableOrUnknown(data['path']!, _pathMeta));
+    } else if (isInserting) {
+      context.missing(_pathMeta);
+    }
     return context;
   }
 
@@ -70,6 +81,8 @@ class $TransactionItemsTable extends TransactionItems
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       total: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
+      path: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}path'])!,
     );
   }
 
@@ -83,14 +96,19 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   final int id;
   final String name;
   final double total;
+  final String path;
   const TransactionItem(
-      {required this.id, required this.name, required this.total});
+      {required this.id,
+      required this.name,
+      required this.total,
+      required this.path});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['total'] = Variable<double>(total);
+    map['path'] = Variable<String>(path);
     return map;
   }
 
@@ -99,6 +117,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
       id: Value(id),
       name: Value(name),
       total: Value(total),
+      path: Value(path),
     );
   }
 
@@ -109,6 +128,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       total: serializer.fromJson<double>(json['total']),
+      path: serializer.fromJson<String>(json['path']),
     );
   }
   @override
@@ -118,69 +138,84 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'total': serializer.toJson<double>(total),
+      'path': serializer.toJson<String>(path),
     };
   }
 
-  TransactionItem copyWith({int? id, String? name, double? total}) =>
+  TransactionItem copyWith(
+          {int? id, String? name, double? total, String? path}) =>
       TransactionItem(
         id: id ?? this.id,
         name: name ?? this.name,
         total: total ?? this.total,
+        path: path ?? this.path,
       );
   @override
   String toString() {
     return (StringBuffer('TransactionItem(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('total: $total')
+          ..write('total: $total, ')
+          ..write('path: $path')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, total);
+  int get hashCode => Object.hash(id, name, total, path);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TransactionItem &&
           other.id == this.id &&
           other.name == this.name &&
-          other.total == this.total);
+          other.total == this.total &&
+          other.path == this.path);
 }
 
 class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   final Value<int> id;
   final Value<String> name;
   final Value<double> total;
+  final Value<String> path;
   const TransactionItemsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.total = const Value.absent(),
+    this.path = const Value.absent(),
   });
   TransactionItemsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required double total,
+    required String path,
   })  : name = Value(name),
-        total = Value(total);
+        total = Value(total),
+        path = Value(path);
   static Insertable<TransactionItem> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<double>? total,
+    Expression<String>? path,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (total != null) 'total': total,
+      if (path != null) 'path': path,
     });
   }
 
   TransactionItemsCompanion copyWith(
-      {Value<int>? id, Value<String>? name, Value<double>? total}) {
+      {Value<int>? id,
+      Value<String>? name,
+      Value<double>? total,
+      Value<String>? path}) {
     return TransactionItemsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       total: total ?? this.total,
+      path: path ?? this.path,
     );
   }
 
@@ -196,6 +231,9 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     if (total.present) {
       map['total'] = Variable<double>(total.value);
     }
+    if (path.present) {
+      map['path'] = Variable<String>(path.value);
+    }
     return map;
   }
 
@@ -204,7 +242,8 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     return (StringBuffer('TransactionItemsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('total: $total')
+          ..write('total: $total, ')
+          ..write('path: $path')
           ..write(')'))
         .toString();
   }

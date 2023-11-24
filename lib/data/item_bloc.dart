@@ -35,7 +35,8 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     on<CreateTransaction>(
       (event, emit) async {
         emit(Saving());
-        _repository.create(event.name, event.total, event.selectedOptions);
+        _repository.create(
+            event.name, event.total, event.path, event.selectedOptions);
         emit(Saved());
       },
     );

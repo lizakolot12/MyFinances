@@ -13,6 +13,8 @@ class TransactionItems extends Table {
   TextColumn get name => text()();
 
   RealColumn get total => real()();
+
+  TextColumn get path => text()();
 }
 
 class MyTag extends Table {

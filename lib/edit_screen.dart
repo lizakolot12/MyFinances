@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_study/provider_state_managment.dart';
 import 'package:my_study/widgets.dart';
 import 'package:provider/provider.dart';
@@ -118,6 +121,20 @@ class EditFormState extends State<EditForm> {
   final TextEditingController amountController = TextEditingController();
   List<String> savedSelectedOptions = [];
   List<String> allOptions = ['Комуналка', 'Продукти', 'Розваги'];
+  String path = "";
+  File? image;
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        image = File(pickedFile.path);
+        path = pickedFile.path;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -125,11 +142,14 @@ class EditFormState extends State<EditForm> {
     nameController.text = widget.transaction?.name ?? "";
     amountController.text = widget.transaction?.total.toString() ?? "";
     savedSelectedOptions = widget.transaction?.tags ?? [];
+    path = widget.transaction?.path ?? "";
+    image = File(path);
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
           controller: nameController,
@@ -141,6 +161,18 @@ class EditFormState extends State<EditForm> {
           decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.label_total),
           keyboardType: TextInputType.number,
+        ),
+        Center(
+            child: path == ""
+                ? const Text('')
+                : Image.file(
+                    image!,
+                    width: 200,
+                    height: 200,
+                  )),
+        TextButton(
+          onPressed: _pickImage,
+          child: const Text("Завантажити чек"),
         ),
         Expanded(
             child: ChipInputWidget(
@@ -156,11 +188,11 @@ class EditFormState extends State<EditForm> {
             double amount = double.tryParse(amountController.text) ?? 0;
             if (widget.transaction == null) {
               context.read<TransactionItemBloc>().add(
-                    CreateTransaction(name, amount, savedSelectedOptions),
+                    CreateTransaction(name, amount, path, savedSelectedOptions),
                   );
             } else {
               Transaction transaction = Transaction(widget.transaction?.id ?? 0,
-                  name, amount, savedSelectedOptions);
+                  name, amount, path, savedSelectedOptions);
               context.read<TransactionItemBloc>().add(
                     SaveTransaction(transaction),
                   );
