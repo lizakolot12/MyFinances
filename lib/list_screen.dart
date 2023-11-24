@@ -62,11 +62,7 @@ class ListScreen extends StatelessWidget {
   }
 
   void goToDetail(BuildContext context, int id) {
-    if (id == 3) {
-      GoRouter.of(context).go("/some");
-    } else {
-      GoRouter.of(context).go("/edit/$id");
-    }
+    GoRouter.of(context).go("/edit/$id");
   }
 
   Widget progress() {

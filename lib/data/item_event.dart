@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 
 import 'data.dart';
 
-
 @immutable
 abstract class ItemEvent {}
 
@@ -23,6 +22,7 @@ class SaveTransaction extends ItemEvent {
 class CreateTransaction extends ItemEvent {
   late final String name;
   late final double total;
+  late final List<String> selectedOptions;
 
-  CreateTransaction(this.name, this.total);
+  CreateTransaction(this.name, this.total, this.selectedOptions);
 }

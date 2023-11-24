@@ -1,7 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:my_study/data/data.dart';
-import 'package:my_study/data/transaction_bloc.dart';
 
 import 'item_event.dart';
 import 'item_state.dart';
@@ -21,7 +19,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     on<EditTransaction>(
       (event, emit) async {
         emit(Loading());
-        Future<Transaction> transactionFuture = _repository.getById(event.id);
+        Future<Transaction> transactionFuture = _repository.get(event.id);
         Transaction transaction = await transactionFuture;
         emit(EditedTransaction(transaction));
       },
@@ -37,7 +35,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     on<CreateTransaction>(
       (event, emit) async {
         emit(Saving());
-        _repository.create(event.name, event.total);
+        _repository.create(event.name, event.total, event.selectedOptions);
         emit(Saved());
       },
     );
