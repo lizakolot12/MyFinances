@@ -10,16 +10,19 @@ class Transaction {
   final int _id;
   final String _name;
   final double _total;
+  final String _path;
   List<String> _tags;
   bool _isProgress = false;
 
-  Transaction(this._id, this._name, this._total, this._tags);
+  Transaction(this._id, this._name, this._total, this._path, this._tags);
 
   List<String> get tags => _tags;
 
   set tags(List<String> value) {
     _tags = value;
   }
+
+  String? get path => _path;
 
   double get total => _total;
 
@@ -45,7 +48,7 @@ class TransactionRepository {
     return _database
         .select(_database.transactionItems)
         .map(
-          (e) => Transaction(e.id, e.name, e.total, List.empty()),
+          (e) => Transaction(e.id, e.name, e.total, e.path, List.empty()),
         )
         .watch();
   }
@@ -68,6 +71,7 @@ class TransactionRepository {
           row.readTable(_database.transactionItems).id,
           row.readTable(_database.transactionItems).name,
           row.readTable(_database.transactionItems).total,
+          row.readTable(_database.transactionItems).path,
           [],
         );
         if (tag != null) {
@@ -102,7 +106,7 @@ class TransactionRepository {
     var tran = await (_database.select(_database.transactionItems)
           ..where((t) => t.id.equals(id)))
         .getSingle();
-    return Transaction(tran.id, tran.name, tran.total, List.empty());
+    return Transaction(tran.id, tran.name, tran.total, tran.path, List.empty());
   }
 
   Future<Transaction> get(int id) async {
@@ -144,13 +148,12 @@ class TransactionRepository {
     }
   }
 
-  Future<void> create(String name, double total, List<String> selectedOptions) {
+  Future<void> create(
+      String name, double total, String path, List<String> selectedOptions) {
     return _database.transaction(() async {
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
-              name: name,
-              total: total,
-            ),
+                name: name, total: total, path: path),
           );
 
       for (int i = 0; i < selectedOptions.length; i++) {
