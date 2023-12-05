@@ -6,5 +6,6 @@
   "edit_title": "Ввід даних",
   "label_name": "Назва",
   "label_total": "Сума",
-  "label_save": "Зберегти"
+  "label_save": "Зберегти",
+  "empty_chart":"Необхідно створити хоча б один запис"
 }

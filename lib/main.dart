@@ -4,9 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_study/data/chart_bloc.dart';
 import 'package:my_study/data/transaction_bloc.dart';
 import 'package:my_study/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
+import 'chart_screen.dart';
 import 'data/data.dart';
 import 'error_screen.dart';
 import 'item_screen.dart';
@@ -147,7 +149,12 @@ class MainPage extends StatelessWidget {
                                 RepositoryProvider.of<TransactionRepository>(
                                     context)),
                         child: const ListScreen()),
-                    buildStack()
+                    BlocProvider(
+                        create: (context) => ChartBloc(
+                            repository:
+                            RepositoryProvider.of<TransactionRepository>(
+                                context)),
+                        child: const ChartScreen())
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
@@ -182,32 +189,6 @@ class MainPage extends StatelessWidget {
       );
     });
   }
-
-  Widget buildStack() {
-    return Stack(
-      children: <Widget>[
-        Center(
-          child: Image.asset(
-            "assets/images/cake.png",
-            fit: BoxFit.fitHeight,
-          ),
-        ),
-        Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            transform: Matrix4.rotationZ(0.1),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Text(
-              "Приклад використання Stack",
-              style: TextStyle(
-                fontSize: 25,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
+
+

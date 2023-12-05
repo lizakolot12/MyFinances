@@ -49,6 +49,7 @@ dependencies:
   path: ^1.8.3
   flutter_typeahead: ^3.0.1
   image_picker: ^1.0.4
+  syncfusion_flutter_charts: ^23.2.6
 
 dev_dependencies:
   flutter_test:

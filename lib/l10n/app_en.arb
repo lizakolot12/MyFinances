@@ -18,5 +18,6 @@
   "edit_title": "Input",
   "label_name": "Name",
   "label_total": "Total",
-  "label_save": "Save"
+  "label_save": "Save",
+  "empty_chart":"At least one record must be created"
 }
