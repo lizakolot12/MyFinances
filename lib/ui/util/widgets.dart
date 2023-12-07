@@ -24,6 +24,7 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Wrap(
+          spacing: 8,
           children: widget.selectedOptions.map<Widget>((option) {
             return Chip(
               label: Text(option),

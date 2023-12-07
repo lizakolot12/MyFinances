@@ -148,60 +148,73 @@ class EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: nameController,
-          decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.label_name),
-        ),
-        TextFormField(
-          controller: amountController,
-          decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.label_total),
-          keyboardType: TextInputType.number,
-        ),
-        Center(
-            child: path == ""
-                ? const Text('')
-                : Image.file(
-                    image!,
-                    width: 200,
-                    height: 200,
+    return Stack(children: [
+      SingleChildScrollView(
+          child: SizedBox(
+              height: 1240,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.label_name),
+                  ),
+                  TextFormField(
+                    controller: amountController,
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.label_total),
+                    keyboardType: TextInputType.number,
+                  ),
+                  Center(
+                      child: path == ""
+                          ? const Text('')
+                          : Image.file(
+                              image!,
+                              width: 200,
+                              height: 200,
+                            )),
+                  TextButton(
+                    onPressed: _pickImage,
+                    child: const Text("Завантажити чек"),
+                  ),
+                  Expanded(
+                      child: ChipInputWidget(
+                    allOptions: allOptions,
+                    onSelectedOptionsChanged: (selectedOptions) {
+                      savedSelectedOptions = selectedOptions;
+                    },
+                    selectedOptions: savedSelectedOptions,
                   )),
-        TextButton(
-          onPressed: _pickImage,
-          child: const Text("Завантажити чек"),
-        ),
-        Expanded(
-            child: ChipInputWidget(
-          allOptions: allOptions,
-          onSelectedOptionsChanged: (selectedOptions) {
-            savedSelectedOptions = selectedOptions;
-          },
-          selectedOptions: savedSelectedOptions,
-        )),
-        ElevatedButton(
-          onPressed: () {
-            String name = nameController.text;
-            double amount = double.tryParse(amountController.text) ?? 0;
-            if (widget.transaction == null) {
-              context.read<TransactionItemBloc>().add(
-                    CreateTransaction(name, amount, path, savedSelectedOptions),
-                  );
-            } else {
-              Transaction transaction = Transaction(widget.transaction?.id ?? 0,
-                  name, amount, path, savedSelectedOptions);
-              context.read<TransactionItemBloc>().add(
-                    SaveTransaction(transaction),
-                  );
-            }
-          },
-          child: Text(AppLocalizations.of(context)!.label_save),
-        ),
-      ],
-    );
+                ],
+              ))),
+      Positioned(
+          bottom: 16.0,
+          right: 16.0,
+          child:  ElevatedButton(
+            onPressed: () {
+              String name = nameController.text;
+              double amount = double.tryParse(amountController.text) ?? 0;
+              if (widget.transaction == null) {
+                context.read<TransactionItemBloc>().add(
+                      CreateTransaction(
+                          name, amount, path, savedSelectedOptions),
+                    );
+              } else {
+                Transaction transaction = Transaction(
+                    widget.transaction?.id ?? 0,
+                    name,
+                    amount,
+                    path,
+                    savedSelectedOptions);
+                context.read<TransactionItemBloc>().add(
+                      SaveTransaction(transaction),
+                    );
+              }
+            },
+            child: Text(AppLocalizations.of(context)!.label_save),
+          )),
+    ]);
   }
 
   @override
