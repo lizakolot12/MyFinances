@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'data/chart_bloc.dart';
+import '../../bloc/chart/chart_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChartScreen extends StatelessWidget {

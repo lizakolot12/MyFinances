@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'data.dart';
+import '../../data/data.dart';
 
 @immutable
 abstract class ItemEvent {}

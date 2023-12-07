@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_study/provider_state_managment.dart';
-import 'package:my_study/widgets.dart';
+import 'package:my_study/ui/provider_state_managment.dart';
+import 'package:my_study/ui/util/widgets.dart';
 import 'package:provider/provider.dart';
-import 'data/data.dart';
-import 'data/item_bloc.dart';
-import 'data/item_event.dart';
-import 'data/item_state.dart';
-import 'data/transaction_bloc.dart';
+import '../../data/data.dart';
+import '../../bloc/item/item_bloc.dart';
+import '../../bloc/item/item_event.dart';
+import '../../bloc/item/item_state.dart';
+import '../../bloc/list/transaction_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditScreen extends StatelessWidget {

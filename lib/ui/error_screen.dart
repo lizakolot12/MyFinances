@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_study/item_screen.dart';
+import 'package:my_study/ui/item/item_screen.dart';
 import 'package:provider/provider.dart';
-import 'data/data.dart';
-import 'data/item_bloc.dart';
-import 'data/item_event.dart';
-import 'data/item_state.dart';
-import 'data/transaction_bloc.dart';
+import '../data/data.dart';
+import '../bloc/item/item_bloc.dart';
+import '../bloc/item/item_event.dart';
+import '../bloc/item/item_state.dart';
+import '../bloc/list/transaction_bloc.dart';
 
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key});

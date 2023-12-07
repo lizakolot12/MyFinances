@@ -4,15 +4,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:my_study/data/chart_bloc.dart';
-import 'package:my_study/data/transaction_bloc.dart';
-import 'package:my_study/provider_state_managment.dart';
+import 'package:my_study/bloc/chart/chart_bloc.dart';
+import 'package:my_study/bloc/list/transaction_bloc.dart';
+import 'package:my_study/ui/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
-import 'chart_screen.dart';
+import 'ui/chart/chart_screen.dart';
 import 'data/data.dart';
-import 'error_screen.dart';
-import 'item_screen.dart';
-import 'list_screen.dart';
+import 'ui/error_screen.dart';
+import 'ui/item/item_screen.dart';
+import 'ui/list/list_screen.dart';
 
 void main() {
   runApp(

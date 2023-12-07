@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'data/data.dart';
-import 'data/transaction_bloc.dart';
+import '../../data/data.dart';
+import '../../bloc/list/transaction_bloc.dart';
 
 class ListScreen extends StatelessWidget {
   const ListScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'data/data.dart';
-import 'data/item_bloc.dart';
+import '../../data/data.dart';
+import '../../bloc/item/item_bloc.dart';
 import 'edit_screen.dart';
 
 class ItemScreen extends StatelessWidget {
