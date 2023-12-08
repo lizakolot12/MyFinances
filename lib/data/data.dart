@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 import 'db/my_db.dart';
 
@@ -128,12 +129,19 @@ class TransactionRepository {
   }
 
   Future<void> edit(Transaction updatedTransaction) async {
+    String name = updatedTransaction.name;
+    if(name.isEmpty){
+      final DateTime now = DateTime.now();
+      final DateFormat formatter = DateFormat('dd-MM-yy HH:mm');
+      final String formatted = formatter.format(now);
+      name = formatted;
+    }
     await _database.update(_database.transactionItems)
       ..where((t) => t.id.equals(updatedTransaction.id))
       ..write(
         TransactionItemsCompanion(
           id: Value(updatedTransaction.id),
-          name: Value(updatedTransaction.name),
+          name: Value(name),
           total: Value(updatedTransaction.total),
         ),
       );
