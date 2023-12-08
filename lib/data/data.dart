@@ -109,6 +109,17 @@ class TransactionRepository {
     return Transaction(tran.id, tran.name, tran.total, tran.path, List.empty());
   }
 
+  Future<List<String>> getAllTags() async {
+    var list = await (_database.select(_database.myTag)).get();
+    List<String> result = List.empty(growable: true);
+    for (int i = 0; i < list.length; i++) {
+      if (!result.contains(list[i].name)) {
+        result.add(list[i].name);
+      }
+    }
+    return result;
+  }
+
   Future<Transaction> get(int id) async {
     var res = await (_database.select(_database.transactionItems)
           ..where((t) => t.id.equals(id)))

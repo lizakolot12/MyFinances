@@ -51,9 +51,9 @@ class EditScreen extends StatelessWidget {
                           return progress();
                         }
                       } else if (state is NewItem) {
-                        return const EditForm(transaction: null);
+                        return EditForm(transaction: null, allOptions:state.possibleTags);
                       } else if (state is EditedTransaction) {
-                        return EditForm(transaction: state.transaction);
+                        return EditForm(transaction: state.transaction, allOptions:state.possibleTags);
                       } else if (state is Saved) {
                         WidgetsBinding.instance.addPostFrameCallback(
                           (_) {
@@ -109,8 +109,9 @@ class EditScreen extends StatelessWidget {
 
 class EditForm extends StatefulWidget {
   final Transaction? transaction;
+  final List<String> allOptions;
 
-  const EditForm({super.key, required this.transaction});
+  const EditForm({super.key, required this.transaction, required this.allOptions});
 
   @override
   EditFormState createState() => EditFormState();
@@ -120,7 +121,6 @@ class EditFormState extends State<EditForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   List<String> savedSelectedOptions = [];
-  List<String> allOptions = ['Комуналка', 'Продукти', 'Розваги'];
   String path = "";
   File? image;
 
@@ -180,7 +180,7 @@ class EditFormState extends State<EditForm> {
                   ),
                   Expanded(
                       child: ChipInputWidget(
-                    allOptions: allOptions,
+                    allOptions: widget.allOptions,
                     onSelectedOptionsChanged: (selectedOptions) {
                       savedSelectedOptions = selectedOptions;
                     },

@@ -13,7 +13,8 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         super(Initial()) {
     on<NewTransaction>(
       (event, emit) async {
-        emit(NewItem());
+        List<String> allTags = await _repository.getAllTags();
+        emit(NewItem(allTags));
       },
     );
 
@@ -22,7 +23,8 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         emit(Loading());
         Future<Transaction> transactionFuture = _repository.get(event.id);
         Transaction transaction = await transactionFuture;
-        emit(EditedTransaction(transaction));
+        List<String> allTags = await _repository.getAllTags();
+        emit(EditedTransaction(transaction, allTags));
       },
     );
 
@@ -37,7 +39,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
       (event, emit) async {
         emit(Saving());
         String name = event.name;
-        if(name.isEmpty){
+        if (name.isEmpty) {
           final DateTime now = DateTime.now();
           final DateFormat formatter = DateFormat('dd-MM-yy HH:mm');
           final String formatted = formatter.format(now);

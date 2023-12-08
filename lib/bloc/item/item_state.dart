@@ -6,12 +6,16 @@ import '../../data/data.dart';
 abstract class ItemState {}
 
 class Initial extends ItemState {}
-class NewItem extends ItemState {}
+class NewItem extends ItemState {
+  late final List<String> possibleTags;
+  NewItem(this.possibleTags);
+}
 
 class EditedTransaction extends ItemState {
   late final Transaction transaction;
+  late final List<String> possibleTags;
 
-  EditedTransaction(this.transaction);
+  EditedTransaction(this.transaction, this.possibleTags);
 }
 class Loading extends ItemState {
 
