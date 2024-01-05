@@ -9,12 +9,13 @@ import 'db/my_db.dart';
 class Transaction {
   final int _id;
   final String _name;
+  final DateTime _date;
   final double _total;
   final String _path;
   List<String> _tags;
   bool _isProgress = false;
 
-  Transaction(this._id, this._name, this._total, this._path, this._tags);
+  Transaction(this._id, this._name, this._date, this._total, this._path, this._tags);
 
   List<String> get tags => _tags;
 
@@ -29,6 +30,8 @@ class Transaction {
   String get name => _name;
 
   int get id => _id;
+
+  DateTime get date => _date;
 
   bool get isProgress => _isProgress;
 
@@ -48,7 +51,7 @@ class TransactionRepository {
     return _database
         .select(_database.transactionItems)
         .map(
-          (e) => Transaction(e.id, e.name, e.total, e.path, List.empty()),
+          (e) => Transaction(e.id, e.name, DateTime.fromMillisecondsSinceEpoch(e.date), e.total, e.path, List.empty()),
         )
         .watch();
   }
@@ -70,6 +73,7 @@ class TransactionRepository {
         final transaction = Transaction(
           row.readTable(_database.transactionItems).id,
           row.readTable(_database.transactionItems).name,
+          DateTime.fromMillisecondsSinceEpoch(row.readTable(_database.transactionItems).date),
           row.readTable(_database.transactionItems).total,
           row.readTable(_database.transactionItems).path,
           [],
@@ -106,7 +110,8 @@ class TransactionRepository {
     var tran = await (_database.select(_database.transactionItems)
           ..where((t) => t.id.equals(id)))
         .getSingle();
-    return Transaction(tran.id, tran.name, tran.total, tran.path, List.empty());
+    return Transaction(tran.id, tran.name,
+        DateTime.fromMillisecondsSinceEpoch(tran.date), tran.total, tran.path, List.empty());
   }
 
   Future<List<String>> getAllTags() async {
@@ -141,6 +146,7 @@ class TransactionRepository {
 
   Future<void> edit(Transaction updatedTransaction) async {
     String name = updatedTransaction.name;
+
     if(name.isEmpty){
       final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('dd-MM-yy HH:mm');
@@ -152,8 +158,9 @@ class TransactionRepository {
       ..write(
         TransactionItemsCompanion(
           id: Value(updatedTransaction.id),
-          name: Value(name),
+          name: Value(name), date: Value(updatedTransaction.date.millisecondsSinceEpoch),
           total: Value(updatedTransaction.total),
+          path:Value(updatedTransaction.path??"")
         ),
       );
     await (_database.delete(_database.myTag)
@@ -169,9 +176,10 @@ class TransactionRepository {
   Future<void> create(
       String name, double total, String path, List<String> selectedOptions) {
     return _database.transaction(() async {
+      final DateTime now = DateTime.now();
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
-                name: name, total: total, path: path),
+                name: name, date: now.microsecondsSinceEpoch, total: total, path: path),
           );
 
       for (int i = 0; i < selectedOptions.length; i++) {

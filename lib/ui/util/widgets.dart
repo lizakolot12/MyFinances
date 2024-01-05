@@ -23,43 +23,43 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Wrap(
-          spacing: 8,
-          children: widget.selectedOptions.map<Widget>((option) {
-            return Chip(
-              label: Text(option),
-              onDeleted: () {
-                _handleDeleted(option);
-              },
-            );
-          }).toList(),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: TypeAheadField<String>(
-              textFieldConfiguration: TextFieldConfiguration(
-                controller: textEditingController,
-                decoration: const InputDecoration(
-                  hintText: 'Category',
-                ),
-                onSubmitted: (value) {
-                  _handleSubmitted(value);
-                },
-              ),
-              suggestionsCallback: (pattern) {
-                return widget.allOptions.where((option) =>
-                    option.toLowerCase().contains(pattern.toLowerCase()));
-              },
-              itemBuilder: (context, suggestion) {
-                return ListTile(
-                  title: Text(suggestion),
+        ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 10, maxHeight: 120),
+            child:SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child:  Wrap(
+              spacing: 8,
+              children: widget.selectedOptions.map<Widget>((option) {
+                return Chip(
+                  label: Text(option),
+                  onDeleted: () {
+                    _handleDeleted(option);
+                  },
                 );
-              },
-              onSuggestionSelected: (suggestion) {
-                _handleSubmitted(suggestion);
-              },
+              }).toList(),
+            ))),
+        TypeAheadField<String>(
+          textFieldConfiguration: TextFieldConfiguration(
+            controller: textEditingController,
+            decoration: const InputDecoration(
+              hintText: 'Category',
             ),
+            onSubmitted: (value) {
+              _handleSubmitted(value);
+            },
           ),
+          suggestionsCallback: (pattern) {
+            return widget.allOptions.where((option) =>
+                option.toLowerCase().contains(pattern.toLowerCase()));
+          },
+          itemBuilder: (context, suggestion) {
+            return ListTile(
+              title: Text(suggestion),
+            );
+          },
+          onSuggestionSelected: (suggestion) {
+            _handleSubmitted(suggestion);
+          },
         ),
       ],
     );

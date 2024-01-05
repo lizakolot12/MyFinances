@@ -51,9 +51,12 @@ class EditScreen extends StatelessWidget {
                           return progress();
                         }
                       } else if (state is NewItem) {
-                        return EditForm(transaction: null, allOptions:state.possibleTags);
+                        return EditForm(
+                            transaction: null, allOptions: state.possibleTags);
                       } else if (state is EditedTransaction) {
-                        return EditForm(transaction: state.transaction, allOptions:state.possibleTags);
+                        return EditForm(
+                            transaction: state.transaction,
+                            allOptions: state.possibleTags);
                       } else if (state is Saved) {
                         WidgetsBinding.instance.addPostFrameCallback(
                           (_) {
@@ -111,7 +114,8 @@ class EditForm extends StatefulWidget {
   final Transaction? transaction;
   final List<String> allOptions;
 
-  const EditForm({super.key, required this.transaction, required this.allOptions});
+  const EditForm(
+      {super.key, required this.transaction, required this.allOptions});
 
   @override
   EditFormState createState() => EditFormState();
@@ -132,6 +136,7 @@ class EditFormState extends State<EditForm> {
       setState(() {
         image = File(pickedFile.path);
         path = pickedFile.path;
+        print("result = $path");
       });
     }
   }
@@ -143,6 +148,7 @@ class EditFormState extends State<EditForm> {
     amountController.text = widget.transaction?.total.toString() ?? "";
     savedSelectedOptions = widget.transaction?.tags ?? [];
     path = widget.transaction?.path ?? "";
+    print("path $path");
     image = File(path);
   }
 
@@ -150,48 +156,70 @@ class EditFormState extends State<EditForm> {
   Widget build(BuildContext context) {
     return Stack(children: [
       SingleChildScrollView(
-          child: SizedBox(
-              height: 1240,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.label_name),
+        child: SizedBox(
+          height: 1240,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.label_name),
+              ),
+              TextFormField(
+                controller: amountController,
+                decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.label_total),
+                keyboardType: TextInputType.number,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: ChipInputWidget(
+                  allOptions: widget.allOptions,
+                  onSelectedOptionsChanged: (selectedOptions) {
+                    savedSelectedOptions = selectedOptions;
+                  },
+                  selectedOptions: savedSelectedOptions,
+                ),
+              ),
+              InkWell(
+                onTap: _pickImage,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          path == ""
+                              ? const Text('')
+                              : Image.file(
+                                  image!,
+                                  width: 200,
+                                  height: 200,
+                                ),
+                          OutlinedButton(
+                            onPressed: _pickImage,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.upload_rounded),
+                                Text(AppLocalizations.of(context)!.take_photo)
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  TextFormField(
-                    controller: amountController,
-                    decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.label_total),
-                    keyboardType: TextInputType.number,
-                  ),
-                  Center(
-                      child: path == ""
-                          ? const Text('')
-                          : Image.file(
-                              image!,
-                              width: 200,
-                              height: 200,
-                            )),
-                  TextButton(
-                    onPressed: _pickImage,
-                    child: const Text("Завантажити чек"),
-                  ),
-                  Expanded(
-                      child: ChipInputWidget(
-                    allOptions: widget.allOptions,
-                    onSelectedOptionsChanged: (selectedOptions) {
-                      savedSelectedOptions = selectedOptions;
-                    },
-                    selectedOptions: savedSelectedOptions,
-                  )),
-                ],
-              ))),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       Positioned(
           bottom: 16.0,
           right: 16.0,
-          child:  ElevatedButton(
+          child: ElevatedButton(
             onPressed: () {
               String name = nameController.text;
               double amount = double.tryParse(amountController.text) ?? 0;
@@ -204,6 +232,9 @@ class EditFormState extends State<EditForm> {
                 Transaction transaction = Transaction(
                     widget.transaction?.id ?? 0,
                     name,
+                    DateTime.fromMillisecondsSinceEpoch(
+                        widget.transaction?.date.millisecondsSinceEpoch ??
+                            DateTime.now().millisecondsSinceEpoch),
                     amount,
                     path,
                     savedSelectedOptions);

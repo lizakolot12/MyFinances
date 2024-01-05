@@ -129,11 +129,11 @@ class MainPage extends StatelessWidget {
                 appBar: AppBar(
                   title: Text(AppLocalizations.of(context)!.title),
                   actions: [
-                    IconButton(
+             /*       IconButton(
                       icon: const Icon(Icons.ac_unit),
                       tooltip: 'Toggle theme',
                       onPressed: () => settings.toggleLightness(),
-                    ),
+                    ),*/
                     IconButton(
                       icon: const Icon(Icons.language),
                       tooltip: 'Toggle language',

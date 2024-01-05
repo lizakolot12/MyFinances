@@ -19,5 +19,6 @@
   "label_name": "Name",
   "label_total": "Total",
   "label_save": "Save",
-  "empty_chart":"At least one record must be created"
+  "empty_chart":"At least one record must be created",
+  "take_photo":"Receipt"
 }

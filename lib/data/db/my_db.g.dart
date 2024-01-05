@@ -23,6 +23,11 @@ class $TransactionItemsTable extends TransactionItems
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+      'date', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
@@ -34,7 +39,7 @@ class $TransactionItemsTable extends TransactionItems
       'path', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, name, total, path];
+  List<GeneratedColumn> get $columns => [id, name, date, total, path];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -53,6 +58,12 @@ class $TransactionItemsTable extends TransactionItems
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
     }
     if (data.containsKey('total')) {
       context.handle(
@@ -79,6 +90,8 @@ class $TransactionItemsTable extends TransactionItems
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      date: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}date'])!,
       total: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
       path: attachedDatabase.typeMapping
@@ -95,11 +108,13 @@ class $TransactionItemsTable extends TransactionItems
 class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   final int id;
   final String name;
+  final int date;
   final double total;
   final String path;
   const TransactionItem(
       {required this.id,
       required this.name,
+      required this.date,
       required this.total,
       required this.path});
   @override
@@ -107,6 +122,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
+    map['date'] = Variable<int>(date);
     map['total'] = Variable<double>(total);
     map['path'] = Variable<String>(path);
     return map;
@@ -116,6 +132,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return TransactionItemsCompanion(
       id: Value(id),
       name: Value(name),
+      date: Value(date),
       total: Value(total),
       path: Value(path),
     );
@@ -127,6 +144,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return TransactionItem(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      date: serializer.fromJson<int>(json['date']),
       total: serializer.fromJson<double>(json['total']),
       path: serializer.fromJson<String>(json['path']),
     );
@@ -137,16 +155,18 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'date': serializer.toJson<int>(date),
       'total': serializer.toJson<double>(total),
       'path': serializer.toJson<String>(path),
     };
   }
 
   TransactionItem copyWith(
-          {int? id, String? name, double? total, String? path}) =>
+          {int? id, String? name, int? date, double? total, String? path}) =>
       TransactionItem(
         id: id ?? this.id,
         name: name ?? this.name,
+        date: date ?? this.date,
         total: total ?? this.total,
         path: path ?? this.path,
       );
@@ -155,6 +175,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return (StringBuffer('TransactionItem(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('date: $date, ')
           ..write('total: $total, ')
           ..write('path: $path')
           ..write(')'))
@@ -162,13 +183,14 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, total, path);
+  int get hashCode => Object.hash(id, name, date, total, path);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TransactionItem &&
           other.id == this.id &&
           other.name == this.name &&
+          other.date == this.date &&
           other.total == this.total &&
           other.path == this.path);
 }
@@ -176,31 +198,37 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
 class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   final Value<int> id;
   final Value<String> name;
+  final Value<int> date;
   final Value<double> total;
   final Value<String> path;
   const TransactionItemsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.date = const Value.absent(),
     this.total = const Value.absent(),
     this.path = const Value.absent(),
   });
   TransactionItemsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
+    required int date,
     required double total,
     required String path,
   })  : name = Value(name),
+        date = Value(date),
         total = Value(total),
         path = Value(path);
   static Insertable<TransactionItem> custom({
     Expression<int>? id,
     Expression<String>? name,
+    Expression<int>? date,
     Expression<double>? total,
     Expression<String>? path,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (date != null) 'date': date,
       if (total != null) 'total': total,
       if (path != null) 'path': path,
     });
@@ -209,11 +237,13 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   TransactionItemsCompanion copyWith(
       {Value<int>? id,
       Value<String>? name,
+      Value<int>? date,
       Value<double>? total,
       Value<String>? path}) {
     return TransactionItemsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      date: date ?? this.date,
       total: total ?? this.total,
       path: path ?? this.path,
     );
@@ -227,6 +257,9 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
     }
     if (total.present) {
       map['total'] = Variable<double>(total.value);
@@ -242,6 +275,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     return (StringBuffer('TransactionItemsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('date: $date, ')
           ..write('total: $total, ')
           ..write('path: $path')
           ..write(')'))

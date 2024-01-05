@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../data/data.dart';
 import '../../bloc/list/transaction_bloc.dart';
@@ -35,12 +36,25 @@ class ListScreen extends StatelessWidget {
   }
 
   Widget buildList(List<Transaction> list) {
+    final DateFormat formatter = DateFormat('dd-MM-yy');
     return ListView.builder(
       itemCount: list.length,
       itemBuilder: (context, index) => ListTile(
-          title: Text(
-            list[index].name,
-            style: Theme.of(context).textTheme.titleMedium,
+          title: Row(
+            children: [
+              Text(
+                list[index].name,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    formatter.format(
+                      list[index].date,
+                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ))
+            ],
           ),
           subtitle: Text(
             list[index].total.toString(),
