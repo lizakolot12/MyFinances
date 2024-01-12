@@ -97,9 +97,11 @@ class TransactionRepository {
               _database.myTag.id_transaction
                   .equalsExp(_database.transactionItems.id)),
         ])
+
         .watch()
         .listen((rows) {
           final transactions = _parse(rows);
+          transactions.sort((b, a) => a.date.compareTo(b.date));
           controller.add(transactions);
         });
 
