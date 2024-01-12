@@ -7,12 +7,14 @@ class TransactionInitial extends TransactionState {}
 
 class LoadingTransaction extends TransactionState {
   late final List<Transaction> transactions;
+  final double total;
 
-  LoadingTransaction(this.transactions);
+  LoadingTransaction(this.transactions, this.total);
 }
 
 class LoadedTransaction extends TransactionState {
   late final List<Transaction> transactions;
+  final double total;
 
-  LoadedTransaction(this.transactions);
+  LoadedTransaction(this.transactions, this.total);
 }

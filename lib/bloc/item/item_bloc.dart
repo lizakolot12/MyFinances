@@ -39,14 +39,14 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
       (event, emit) async {
         emit(Saving());
         String name = event.name;
+        final DateTime now = DateTime.now();
         if (name.isEmpty) {
-          final DateTime now = DateTime.now();
           final DateFormat formatter = DateFormat('dd-MM-yy HH:mm');
           final String formatted = formatter.format(now);
           name = formatted;
         }
         _repository.create(
-            name, event.total, event.path, event.selectedOptions);
+            name, now.millisecondsSinceEpoch, event.total, event.path, event.selectedOptions);
         emit(Saved());
       },
     );

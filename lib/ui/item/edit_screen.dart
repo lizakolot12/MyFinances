@@ -232,9 +232,7 @@ class EditFormState extends State<EditForm> {
                 Transaction transaction = Transaction(
                     widget.transaction?.id ?? 0,
                     name,
-                    DateTime.fromMillisecondsSinceEpoch(
-                        widget.transaction?.date.millisecondsSinceEpoch ??
-                            DateTime.now().millisecondsSinceEpoch),
+                    widget.transaction!.date,
                     amount,
                     path,
                     savedSelectedOptions);

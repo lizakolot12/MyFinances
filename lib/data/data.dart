@@ -176,12 +176,11 @@ class TransactionRepository {
   }
 
   Future<void> create(
-      String name, double total, String path, List<String> selectedOptions) {
+      String name, int date, double total, String path, List<String> selectedOptions) {
     return _database.transaction(() async {
-      final DateTime now = DateTime.now();
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
-                name: name, date: now.microsecondsSinceEpoch, total: total, path: path),
+                name: name, date: date, total: total, path: path),
           );
 
       for (int i = 0; i < selectedOptions.length; i++) {
