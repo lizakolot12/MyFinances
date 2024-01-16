@@ -46,7 +46,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
           name = formatted;
         }
         _repository.create(
-            name, now.millisecondsSinceEpoch, event.total, event.path, event.selectedOptions);
+            name, now, event.total, event.path, event.selectedOptions);
         emit(Saved());
       },
     );

@@ -8,7 +8,7 @@ class TransactionItems extends Table {
 
   TextColumn get name => text()();
 
-  IntColumn get date => integer()();
+  DateTimeColumn get date => dateTime()();
 
   RealColumn get total => real()();
 

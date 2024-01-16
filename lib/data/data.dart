@@ -51,7 +51,7 @@ class TransactionRepository {
     return _database
         .select(_database.transactionItems)
         .map(
-          (e) => Transaction(e.id, e.name, DateTime.fromMillisecondsSinceEpoch(e.date), e.total, e.path, List.empty()),
+          (e) => Transaction(e.id, e.name, e.date, e.total, e.path, List.empty()),
         )
         .watch();
   }
@@ -73,7 +73,7 @@ class TransactionRepository {
         final transaction = Transaction(
           row.readTable(_database.transactionItems).id,
           row.readTable(_database.transactionItems).name,
-          DateTime.fromMillisecondsSinceEpoch(row.readTable(_database.transactionItems).date),
+          row.readTable(_database.transactionItems).date,
           row.readTable(_database.transactionItems).total,
           row.readTable(_database.transactionItems).path,
           [],
@@ -113,7 +113,7 @@ class TransactionRepository {
           ..where((t) => t.id.equals(id)))
         .getSingle();
     return Transaction(tran.id, tran.name,
-        DateTime.fromMillisecondsSinceEpoch(tran.date), tran.total, tran.path, List.empty());
+        tran.date, tran.total, tran.path, List.empty());
   }
 
   Future<List<String>> getAllTags() async {
@@ -160,7 +160,7 @@ class TransactionRepository {
       ..write(
         TransactionItemsCompanion(
           id: Value(updatedTransaction.id),
-          name: Value(name), date: Value(updatedTransaction.date.millisecondsSinceEpoch),
+          name: Value(name), date: Value(updatedTransaction.date),
           total: Value(updatedTransaction.total),
           path:Value(updatedTransaction.path??"")
         ),
@@ -176,7 +176,7 @@ class TransactionRepository {
   }
 
   Future<void> create(
-      String name, int date, double total, String path, List<String> selectedOptions) {
+      String name, DateTime date, double total, String path, List<String> selectedOptions) {
     return _database.transaction(() async {
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(

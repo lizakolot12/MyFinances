@@ -25,9 +25,9 @@ class $TransactionItemsTable extends TransactionItems
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
-  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
       'date', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
@@ -91,7 +91,7 @@ class $TransactionItemsTable extends TransactionItems
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       date: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}date'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       total: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
       path: attachedDatabase.typeMapping
@@ -108,7 +108,7 @@ class $TransactionItemsTable extends TransactionItems
 class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   final int id;
   final String name;
-  final int date;
+  final DateTime date;
   final double total;
   final String path;
   const TransactionItem(
@@ -122,7 +122,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    map['date'] = Variable<int>(date);
+    map['date'] = Variable<DateTime>(date);
     map['total'] = Variable<double>(total);
     map['path'] = Variable<String>(path);
     return map;
@@ -144,7 +144,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return TransactionItem(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      date: serializer.fromJson<int>(json['date']),
+      date: serializer.fromJson<DateTime>(json['date']),
       total: serializer.fromJson<double>(json['total']),
       path: serializer.fromJson<String>(json['path']),
     );
@@ -155,14 +155,18 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'date': serializer.toJson<int>(date),
+      'date': serializer.toJson<DateTime>(date),
       'total': serializer.toJson<double>(total),
       'path': serializer.toJson<String>(path),
     };
   }
 
   TransactionItem copyWith(
-          {int? id, String? name, int? date, double? total, String? path}) =>
+          {int? id,
+          String? name,
+          DateTime? date,
+          double? total,
+          String? path}) =>
       TransactionItem(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -198,7 +202,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
 class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   final Value<int> id;
   final Value<String> name;
-  final Value<int> date;
+  final Value<DateTime> date;
   final Value<double> total;
   final Value<String> path;
   const TransactionItemsCompanion({
@@ -211,7 +215,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   TransactionItemsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
-    required int date,
+    required DateTime date,
     required double total,
     required String path,
   })  : name = Value(name),
@@ -221,7 +225,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   static Insertable<TransactionItem> custom({
     Expression<int>? id,
     Expression<String>? name,
-    Expression<int>? date,
+    Expression<DateTime>? date,
     Expression<double>? total,
     Expression<String>? path,
   }) {
@@ -237,7 +241,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   TransactionItemsCompanion copyWith(
       {Value<int>? id,
       Value<String>? name,
-      Value<int>? date,
+      Value<DateTime>? date,
       Value<double>? total,
       Value<String>? path}) {
     return TransactionItemsCompanion(
@@ -259,7 +263,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
       map['name'] = Variable<String>(name.value);
     }
     if (date.present) {
-      map['date'] = Variable<int>(date.value);
+      map['date'] = Variable<DateTime>(date.value);
     }
     if (total.present) {
       map['total'] = Variable<double>(total.value);
