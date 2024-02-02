@@ -22,7 +22,6 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
         map["Інше"] = 0;
         await for (var list in _repository.getAll()) {
           for (Transaction tr in list) {
-            print(tr.total);
             if (tr.tags.isEmpty) {
               map["Інше"] = (map["Інше"] ?? 0) + tr.total;
             } else {
@@ -32,9 +31,31 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
             }
           }
           map.forEach((k,v) => result.add(TotalData(k, v)));
-          print(map);
-          print(result);
-          emit(LoadedChart(result));
+          emit(LoadedChart(result, map.keys.toList()));
+        }
+      },
+    );
+
+    on<GetFiltered>(
+          (event, emit) async {
+        emit(ChartInitial());
+        List<TotalData> result = List.empty(growable: true);
+        Map<String, double> map = {};
+        map["Інше"] = 0;
+        await for (var list in _repository.getAll()) {
+          for (Transaction tr in list) {
+            if (tr.tags.isEmpty) {
+              map["Інше"] = (map["Інше"] ?? 0) + tr.total;
+            } else {
+              for (String tg in tr.tags) {
+                map[tg] =(map[tg] ?? 0) + tr.total;
+              }
+            }
+          }
+          var allTags = map.keys.toList();
+          map.removeWhere((key, value) => !event.tagsAdded.contains(key));
+          map.forEach((k,v) => result.add(TotalData(k, v)));
+          emit(LoadedChart(result, allTags));
         }
       },
     );

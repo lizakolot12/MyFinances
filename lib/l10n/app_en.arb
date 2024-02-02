@@ -21,5 +21,7 @@
   "label_save": "Save",
   "empty_chart":"At least one record must be created",
   "take_photo":"Receipt",
-  "month_total":"Total for the last month:"
+  "month_total":"Total for the last month:",
+  "tags_labels": "Choose categories",
+  "tags": "Categories"
 }

@@ -7,8 +7,9 @@ class ChartInitial extends ChartState {}
 
 class LoadedChart extends ChartState {
   late final List<TotalData> data;
+  late final List<String> tags;
 
-  LoadedChart(this.data);
+  LoadedChart(this.data, this.tags);
 }
 
 class TotalData {
