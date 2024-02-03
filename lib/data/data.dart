@@ -15,7 +15,8 @@ class Transaction {
   List<String> _tags;
   bool _isProgress = false;
 
-  Transaction(this._id, this._name, this._date, this._total, this._path, this._tags);
+  Transaction(
+      this._id, this._name, this._date, this._total, this._path, this._tags);
 
   List<String> get tags => _tags;
 
@@ -51,7 +52,8 @@ class TransactionRepository {
     return _database
         .select(_database.transactionItems)
         .map(
-          (e) => Transaction(e.id, e.name, e.date, e.total, e.path, List.empty()),
+          (e) =>
+              Transaction(e.id, e.name, e.date, e.total, e.path, List.empty()),
         )
         .watch();
   }
@@ -87,7 +89,12 @@ class TransactionRepository {
     return transactions;
   }
 
-  Stream<List<Transaction>> getAll() {
+  Stream<List<Transaction>> getAll(
+      {DateTime? start = null, DateTime? end = null}) {
+    var from = start ?? DateTime(0);
+    var until = end ?? DateTime.now();
+    print("!!!!$from");
+    print("!!!!$until");
     final controller = StreamController<List<Transaction>>();
     _database
         .select(_database.transactionItems)
@@ -97,10 +104,12 @@ class TransactionRepository {
               _database.myTag.id_transaction
                   .equalsExp(_database.transactionItems.id)),
         ])
-
         .watch()
         .listen((rows) {
-          final transactions = _parse(rows);
+          var initial = _parse(rows);
+          var transactions = initial
+              .where((element) => element.date.isAfter(from) && element.date.isBefore(until))
+              .toList();
           transactions.sort((b, a) => a.date.compareTo(b.date));
           controller.add(transactions);
         });
@@ -112,8 +121,8 @@ class TransactionRepository {
     var tran = await (_database.select(_database.transactionItems)
           ..where((t) => t.id.equals(id)))
         .getSingle();
-    return Transaction(tran.id, tran.name,
-        tran.date, tran.total, tran.path, List.empty());
+    return Transaction(
+        tran.id, tran.name, tran.date, tran.total, tran.path, List.empty());
   }
 
   Future<List<String>> getAllTags() async {
@@ -149,7 +158,7 @@ class TransactionRepository {
   Future<void> edit(Transaction updatedTransaction) async {
     String name = updatedTransaction.name;
 
-    if(name.isEmpty){
+    if (name.isEmpty) {
       final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('dd-MM-yy HH:mm');
       final String formatted = formatter.format(now);
@@ -159,11 +168,11 @@ class TransactionRepository {
       ..where((t) => t.id.equals(updatedTransaction.id))
       ..write(
         TransactionItemsCompanion(
-          id: Value(updatedTransaction.id),
-          name: Value(name), date: Value(updatedTransaction.date),
-          total: Value(updatedTransaction.total),
-          path:Value(updatedTransaction.path??"")
-        ),
+            id: Value(updatedTransaction.id),
+            name: Value(name),
+            date: Value(updatedTransaction.date),
+            total: Value(updatedTransaction.total),
+            path: Value(updatedTransaction.path ?? "")),
       );
     await (_database.delete(_database.myTag)
           ..where((t) => t.id_transaction.equals(updatedTransaction.id)))
@@ -175,8 +184,8 @@ class TransactionRepository {
     }
   }
 
-  Future<void> create(
-      String name, DateTime date, double total, String path, List<String> selectedOptions) {
+  Future<void> create(String name, DateTime date, double total, String path,
+      List<String> selectedOptions) {
     return _database.transaction(() async {
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(

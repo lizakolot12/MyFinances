@@ -19,7 +19,7 @@
   "label_name": "Name",
   "label_total": "Total",
   "label_save": "Save",
-  "empty_chart":"At least one record must be created",
+  "empty_chart":"There is no record",
   "take_photo":"Receipt",
   "month_total":"Total for the last month:",
   "tags_labels": "Choose categories",

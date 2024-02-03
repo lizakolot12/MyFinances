@@ -5,10 +5,18 @@ abstract class ChartEvent {}
 
 class GetAll extends ChartEvent {}
 
-class GetFiltered extends ChartEvent {
+class GetFilteredByTags extends ChartEvent {
 
   late final List<String> tagsAdded;
 
-  GetFiltered(this.tagsAdded);
+  GetFilteredByTags(this.tagsAdded);
+}
+
+class GetFilteredByDateRange extends ChartEvent {
+
+  late final DateTime? start;
+  late final DateTime? end;
+
+  GetFilteredByDateRange(this.start, this.end);
 }
 
