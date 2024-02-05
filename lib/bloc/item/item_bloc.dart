@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:my_study/data/data.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'item_event.dart';
 import 'item_state.dart';
@@ -31,7 +35,10 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     on<SaveTransaction>(
       (event, emit) async {
         emit(Saving());
-        _repository.edit(event.transaction);
+        Transaction old = event.transaction;
+        String? newPath = await saveFile(old.path);
+        _repository.edit(Transaction(old.id, old.name, old.date, old.total, newPath ?? "", old.tags));
+
         emit(Saved());
       },
     );
@@ -45,10 +52,32 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
           final String formatted = formatter.format(now);
           name = formatted;
         }
+        String? newPath = await saveFile(event.path);
         _repository.create(
-            name, now, event.total, event.path, event.selectedOptions);
+            name, now, event.total, newPath ?? "", event.selectedOptions);
         emit(Saved());
       },
     );
+  }
+
+  Future<String?> saveFile(String? path) async {
+    if(path == null) {
+      return null;
+    }
+    final image = File(path);
+    final directory = await getApplicationDocumentsDirectory();
+    final folderPath = join(directory.path, 'my_recipts');
+
+    if (!await Directory(folderPath).exists()) {
+    await Directory(folderPath).create(recursive: true);
+    }
+
+    final newPath = join(folderPath, basename(path));
+
+    await image.copy(newPath);
+    await image.delete();
+
+    print("Файл був скопійований до $newPath");
+    return newPath;
   }
 }
