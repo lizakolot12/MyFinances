@@ -58,6 +58,15 @@ class TransactionRepository {
         .watch();
   }
 
+   Future<List<String>> getFileNames() {
+    return _database
+        .select(_database.transactionItems)
+        .map(
+          (e) =>
+          e.path
+    ).get();
+  }
+
   List<Transaction> _parse(List<TypedResult> rows) {
     final transactions = <Transaction>[];
 

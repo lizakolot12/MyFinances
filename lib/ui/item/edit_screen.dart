@@ -136,7 +136,7 @@ class EditFormState extends State<EditForm> {
       setState(() {
         image = File(pickedFile.path);
         path = pickedFile.path;
-        print("result = $path");
+        print("!!!!!!!!!!!!!!!result = $path");
       });
     }
   }
@@ -190,10 +190,10 @@ class EditFormState extends State<EditForm> {
                     child: Center(
                       child: Column(
                         children: [
-                          path == ""
+                          path == "" || image == null || !image!.existsSync()
                               ? const Text('')
                               : Image.file(
-                                  image!,
+                                  image??File(""),
                                   width: 200,
                                   height: 200,
                                 ),

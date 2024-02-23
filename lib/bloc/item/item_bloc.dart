@@ -10,6 +10,7 @@ import 'item_event.dart';
 import 'item_state.dart';
 
 class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
+  static const String _folderForImage = 'my_receipts';
   final TransactionRepository _repository;
 
   TransactionItemBloc({required TransactionRepository repository})
@@ -19,6 +20,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
       (event, emit) async {
         List<String> allTags = await _repository.getAllTags();
         emit(NewItem(allTags));
+        clearFile();
       },
     );
 
@@ -38,7 +40,6 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         Transaction old = event.transaction;
         String? newPath = await saveFile(old.path);
         _repository.edit(Transaction(old.id, old.name, old.date, old.total, newPath ?? "", old.tags));
-
         emit(Saved());
       },
     );
@@ -66,7 +67,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     }
     final image = File(path);
     final directory = await getApplicationDocumentsDirectory();
-    final folderPath = join(directory.path, 'my_recipts');
+    final folderPath = join(directory.path, _folderForImage);
 
     if (!await Directory(folderPath).exists()) {
     await Directory(folderPath).create(recursive: true);
@@ -79,5 +80,36 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
 
     print("Файл був скопійований до $newPath");
     return newPath;
+  }
+
+  Future<void> clearFile() async {
+    List<String> currents = await _repository.getFileNames();
+    currents = currents.map((e) {
+      try {
+        return File(e).path.split(Platform.pathSeparator).last;
+      } catch (e) {
+        return "";
+      }
+    }).toList();
+    print(currents);
+    final systemPath = await getApplicationDocumentsDirectory();
+    final folderPath = join(systemPath.path, _folderForImage);
+    final directory = Directory(folderPath);
+    if (await directory.exists()) {
+      print("isExist");
+      await for (var entity in directory.list()) {
+        print(entity);
+        if (entity is File) {
+          final fileName = entity.path.split(Platform.pathSeparator).last;
+          print(fileName);
+          if (!currents.contains(fileName)) {
+            await entity.delete();
+            print('Файл $fileName видалено.');
+          }
+        }
+      }
+    } else {
+      print('Папка $_folderForImage не існує.');
+    }
   }
 }
