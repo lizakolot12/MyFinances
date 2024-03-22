@@ -23,5 +23,6 @@
   "take_photo":"Receipt",
   "month_total":"Total for the last month:",
   "tags_labels": "Choose categories",
-  "tags": "Categories"
+  "tags": "Categories",
+  "settings_title": "Settings"
 }

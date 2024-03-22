@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:my_study/bloc/chart/chart_bloc.dart';
 import 'package:my_study/bloc/list/transaction_bloc.dart';
+import 'package:my_study/ui/settings/SettingsScreen.dart';
 import 'package:my_study/ui/util/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
 import 'ui/chart/chart_screen.dart';
@@ -67,6 +68,10 @@ class MyApp extends StatelessWidget {
           GoRoute(
             path: "new",
             builder: (context, state) => const ItemScreen(transactionId: null),
+          ),
+          GoRoute(
+            path: "settings",
+            builder: (context, state) =>  SettingsScreen(),
           ),
         ],
       ),
@@ -135,9 +140,9 @@ class MainPage extends StatelessWidget {
                       onPressed: () => settings.toggleLightness(),
                     ),*/
                     IconButton(
-                      icon: const Icon(Icons.language),
+                      icon: const Icon(Icons.settings),
                       tooltip: 'Toggle language',
-                      onPressed: () => settings.toggleLanguage(),
+                      onPressed: () =>  GoRouter.of(context).go("/settings") ,
                     )
                   ],
                 ),

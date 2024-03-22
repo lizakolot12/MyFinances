@@ -58,13 +58,11 @@ class TransactionRepository {
         .watch();
   }
 
-   Future<List<String>> getFileNames() {
+  Future<List<String>> getFileNames() {
     return _database
         .select(_database.transactionItems)
-        .map(
-          (e) =>
-          e.path
-    ).get();
+        .map((e) => e.path)
+        .get();
   }
 
   List<Transaction> _parse(List<TypedResult> rows) {
@@ -117,7 +115,8 @@ class TransactionRepository {
         .listen((rows) {
           var initial = _parse(rows);
           var transactions = initial
-              .where((element) => element.date.isAfter(from) && element.date.isBefore(until))
+              .where((element) =>
+                  element.date.isAfter(from) && element.date.isBefore(until))
               .toList();
           transactions.sort((b, a) => a.date.compareTo(b.date));
           controller.add(transactions);
@@ -161,6 +160,11 @@ class TransactionRepository {
   Future<void> remove(Transaction transaction) async {
     await (_database.delete(_database.transactionItems)
           ..where((t) => t.id.equals(transaction.id)))
+        .go();
+  }
+
+  Future<void> removeTag(String tag) async {
+    await (_database.delete(_database.myTag)..where((t) => t.name.equals(tag)))
         .go();
   }
 
