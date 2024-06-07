@@ -12,7 +12,7 @@ import '../../bloc/chart/chart_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChartScreen extends StatelessWidget {
-  const ChartScreen({Key? key});
+  const ChartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,6 @@ class ChartScreen extends StatelessWidget {
         context.read<ChartBloc>().add(GetAll());
         return progress();
       } else if (state is LoadedChart) {
-        print("new loaded chart " + state.data.length.toString());
         return Data(list: state.data, tags: state.tags);
       } else {
         return progress();
@@ -43,8 +42,6 @@ class Data extends StatelessWidget {
   const Data({super.key, required this.list, required this.tags});
 
   void _onSelectionChanged(BuildContext context, Object? args) {
-    print("!!!!!!!!!!!!");
-    print(args);
     if (args is PickerDateRange) {
       final DateTime? rangeStartDate = args.startDate;
       final DateTime? rangeEndDate = args.endDate;
@@ -56,7 +53,6 @@ class Data extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("create chart " + list.length.toString());
     return Column(
       children: [
         SfDateRangePicker(

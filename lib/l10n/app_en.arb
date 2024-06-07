@@ -24,5 +24,7 @@
   "month_total":"Total for the last month:",
   "tags_labels": "Choose categories",
   "tags": "Categories",
-  "settings_title": "Settings"
+  "settings_title": "Settings",
+  "select_language": "Select language",
+  "delete_tags": "Delete categories"
 }

@@ -66,6 +66,9 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
       return null;
     }
     final image = File(path);
+    if(!await image.exists()){
+      return null;
+    }
     final directory = await getApplicationDocumentsDirectory();
     final folderPath = join(directory.path, _folderForImage);
 

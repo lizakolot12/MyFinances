@@ -12,5 +12,7 @@
   "month_total":"Всього за останній місяць:",
   "tags_labels": "Вибери категорії",
   "tags": "Категорії",
-  "settings_title": "Настройки"
+  "settings_title": "Налаштування",
+  "select_language": "Вибрати мову",
+  "delete_tags": "Видалити категорії"
 }
