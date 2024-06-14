@@ -26,5 +26,7 @@
   "tags": "Categories",
   "settings_title": "Settings",
   "select_language": "Select language",
-  "delete_tags": "Delete categories"
+  "delete_tags": "Delete categories",
+  "create_new_tags": "Create category",
+  "category_label": "Category"
 }

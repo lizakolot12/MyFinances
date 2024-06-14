@@ -14,5 +14,7 @@
   "tags": "Категорії",
   "settings_title": "Налаштування",
   "select_language": "Вибрати мову",
-  "delete_tags": "Видалити категорії"
+  "delete_tags": "Видалити категорії",
+  "create_new_tags": "Створити категорію",
+  "category_label": "Категорія"
 }

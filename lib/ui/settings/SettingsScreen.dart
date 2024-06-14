@@ -189,6 +189,5 @@ class ExpandableList extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
