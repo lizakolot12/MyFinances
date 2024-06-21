@@ -28,5 +28,6 @@
   "select_language": "Select language",
   "delete_tags": "Delete categories",
   "create_new_tags": "Create category",
-  "category_label": "Category"
+  "category_label": "Category",
+  "not_categories": "Empty category list"
 }

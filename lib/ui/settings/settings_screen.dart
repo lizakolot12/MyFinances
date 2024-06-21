@@ -47,6 +47,7 @@ class AllSettingsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: BlocBuilder<SettingsBloc, SettingsState>(
                     builder: (context, state) {
+                      print("NEW STATE " + state.toString());
                       if (state is SettingsInitial) {
                         context.read<SettingsBloc>().add(GetAll());
                         return progress();
@@ -145,10 +146,19 @@ class LanguageSelectionButton extends StatelessWidget {
   }
 }
 
-class ExpandableList extends StatelessWidget {
-  final Set<String>_tags;
+class ExpandableList extends StatefulWidget {
+  final Set<String> _tags;
 
   const ExpandableList(this._tags, {super.key});
+
+  @override
+  ExpandableListState createState() => ExpandableListState(_tags);
+}
+
+class ExpandableListState extends State<ExpandableList> {
+  final Set<String> _categories;
+
+  ExpandableListState(this._categories);
 
   @override
   Widget build(BuildContext context) {
@@ -161,32 +171,70 @@ class ExpandableList extends StatelessWidget {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(AppLocalizations.of(context)!.delete_tags),
-                  content: SingleChildScrollView(
-                    child: ListBody(
-                      children: List.generate(_tags.length,(index){
-                        return GestureDetector(
-                          onTap: () {
-                            settingsBloc.add(DeleteTag(_tags.elementAt(index)));
-                           /* Navigator.of(context).pop();*/
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Text(_tags.elementAt(index)),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
+                return DeleteTagsDialog(
+                  categories: _categories,
+                  onTagDeleted: (String tag) {
+                    settingsBloc.add(DeleteTag(tag));
+                    setState(() {
+                      _categories.remove(tag);
+                      print(_categories.length.toString());
+                    });
+                  },
                 );
-
               },
             );
           },
           child: Text(AppLocalizations.of(context)!.delete_tags),
         ),
       ),
+    );
+  }
+}
+
+class DeleteTagsDialog extends StatefulWidget {
+  final Set<String> categories;
+  final Function(String) onTagDeleted;
+
+  DeleteTagsDialog({required this.categories, required this.onTagDeleted});
+
+  @override
+  _DeleteTagsDialogState createState() => _DeleteTagsDialogState();
+}
+
+class _DeleteTagsDialogState extends State<DeleteTagsDialog> {
+  late Set<String> _categories;
+
+  @override
+  void initState() {
+    super.initState();
+    _categories = widget.categories.toSet(); // Create a copy to modify locally
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context)!.delete_tags),
+      content: _categories.isNotEmpty
+          ? SingleChildScrollView(
+              child: ListBody(
+                children: List.generate(_categories.length, (index) {
+                  final tag = _categories.elementAt(index);
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _categories.remove(tag);
+                        widget.onTagDeleted(tag); // Notify the parent widget
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(tag),
+                    ),
+                  );
+                }),
+              ),
+            )
+          : Text(AppLocalizations.of(context)!.not_categories),
     );
   }
 }

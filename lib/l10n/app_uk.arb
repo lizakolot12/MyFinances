@@ -16,5 +16,6 @@
   "select_language": "Вибрати мову",
   "delete_tags": "Видалити категорії",
   "create_new_tags": "Створити категорію",
-  "category_label": "Категорія"
+  "category_label": "Категорія",
+  "not_categories": "Відсутні категорії"
 }
