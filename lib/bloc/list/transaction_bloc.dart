@@ -18,6 +18,7 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
       (event, emit) async {
         emit(LoadingTransaction(List.empty(), 0));
         await for (var list in _repository.getAll()) {
+          print("!!!!!!!!!!!!!!!!!!!!!!" + list.length.toString());
           saved = list;
           total = 0;
           for (var element in list) {

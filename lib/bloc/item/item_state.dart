@@ -7,13 +7,13 @@ abstract class ItemState {}
 
 class Initial extends ItemState {}
 class NewItem extends ItemState {
-  late final List<String> possibleTags;
+  late final Set<String> possibleTags;
   NewItem(this.possibleTags);
 }
 
 class EditedTransaction extends ItemState {
   late final Transaction transaction;
-  late final List<String> possibleTags;
+  late final Set<String> possibleTags;
 
   EditedTransaction(this.transaction, this.possibleTags);
 }

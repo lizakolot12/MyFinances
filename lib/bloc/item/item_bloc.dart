@@ -18,7 +18,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         super(Initial()) {
     on<NewTransaction>(
       (event, emit) async {
-        List<String> allTags = await _repository.getAllTags();
+        Set<String> allTags = await _repository.getAllTags();
         emit(NewItem(allTags));
         clearFile();
       },
@@ -29,7 +29,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         emit(Loading());
         Future<Transaction> transactionFuture = _repository.get(event.id);
         Transaction transaction = await transactionFuture;
-        List<String> allTags = await _repository.getAllTags();
+        Set<String> allTags = await _repository.getAllTags();
         emit(EditedTransaction(transaction, allTags));
       },
     );

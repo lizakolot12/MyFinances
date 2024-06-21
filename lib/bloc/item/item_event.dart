@@ -23,7 +23,7 @@ class CreateTransaction extends ItemEvent {
   late final String name;
   late final double total;
   late final String path;
-  late final List<String> selectedOptions;
+  late final Set<String> selectedOptions;
 
   CreateTransaction(this.name, this.total, this.path, this.selectedOptions);
 }

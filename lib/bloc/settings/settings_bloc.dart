@@ -13,7 +13,7 @@ part 'settings_state.dart';
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final TransactionRepository _repository;
   final Settings _settings;
-  List<String> _allTags = List.empty();
+  Set<String> _allTags = {};
 
   SettingsBloc(
       {required TransactionRepository repository, required Settings settings})

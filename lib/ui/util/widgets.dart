@@ -3,9 +3,9 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChipInputWidget extends StatefulWidget {
-  final List<String> allOptions;
-  final Function(List<String>) onSelectedOptionsChanged;
-  final List<String> selectedOptions;
+  final Set<String> allOptions;
+  final Function(Set<String>) onSelectedOptionsChanged;
+  final Set<String> selectedOptions;
 
   ChipInputWidget(
       {required this.allOptions,
@@ -82,6 +82,7 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
     if (value.isNotEmpty) {
       setState(() {
         widget.selectedOptions.add(value);
+        widget.allOptions.add(value);
         textEditingController.clear();
         widget.onSelectedOptionsChanged(widget.selectedOptions);
       });

@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:my_study/bloc/chart/chart_bloc.dart';
 import 'package:my_study/bloc/list/transaction_bloc.dart';
-import 'package:my_study/ui/settings/SettingsScreen.dart';
+import 'package:my_study/ui/settings/settings_screen.dart';
 import 'package:my_study/ui/util/provider_state_managment.dart';
 import 'package:provider/provider.dart' as provider;
 import 'ui/chart/chart_screen.dart';

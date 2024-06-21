@@ -12,15 +12,15 @@ class Transaction {
   final DateTime _date;
   final double _total;
   final String _path;
-  List<String> _tags;
+  Set<String> _tags;
   bool _isProgress = false;
 
   Transaction(
       this._id, this._name, this._date, this._total, this._path, this._tags);
 
-  List<String> get tags => _tags;
+  Set<String> get tags => _tags;
 
-  set tags(List<String> value) {
+  set tags(Set<String> value) {
     _tags = value;
   }
 
@@ -52,8 +52,7 @@ class TransactionRepository {
     return _database
         .select(_database.transactionItems)
         .map(
-          (e) =>
-              Transaction(e.id, e.name, e.date, e.total, e.path, List.empty()),
+          (e) => Transaction(e.id, e.name, e.date, e.total, e.path, {}),
         )
         .watch();
   }
@@ -85,7 +84,7 @@ class TransactionRepository {
           row.readTable(_database.transactionItems).date,
           row.readTable(_database.transactionItems).total,
           row.readTable(_database.transactionItems).path,
-          [],
+          {},
         );
         if (tag != null) {
           transaction.tags.add(tag);
@@ -114,10 +113,16 @@ class TransactionRepository {
         .watch()
         .listen((rows) {
           var initial = _parse(rows);
-          var transactions = initial
-              .where((element) =>
-                  element.date.isAfter(from) && element.date.isBefore(until))
-              .toList();
+          print("dbbbbbbb" + initial.length.toString());
+          List<Transaction>? transactions;
+          if (start != null && end != null) {
+            transactions = initial
+                .where((element) =>
+                    element.date.isAfter(from) && element.date.isBefore(until))
+                .toList();
+          } else {
+            transactions = initial;
+          }
           transactions.sort((b, a) => a.date.compareTo(b.date));
           controller.add(transactions);
         });
@@ -130,12 +135,12 @@ class TransactionRepository {
           ..where((t) => t.id.equals(id)))
         .getSingle();
     return Transaction(
-        tran.id, tran.name, tran.date, tran.total, tran.path, List.empty());
+        tran.id, tran.name, tran.date, tran.total, tran.path, {});
   }
 
-  Future<List<String>> getAllTags() async {
+  Future<Set<String>> getAllTags() async {
     var list = await (_database.select(_database.myTag)).get();
-    List<String> result = List.empty(growable: true);
+    Set<String> result = {};
     for (int i = 0; i < list.length; i++) {
       if (!result.contains(list[i].name)) {
         result.add(list[i].name);
@@ -192,13 +197,13 @@ class TransactionRepository {
         .go();
     for (int i = 0; i < updatedTransaction.tags.length; i++) {
       await _database.into(_database.myTag).insert(MyTagCompanion(
-          name: Value(updatedTransaction.tags[i]),
+          name: Value(updatedTransaction.tags.elementAt(i)),
           id_transaction: Value(updatedTransaction.id)));
     }
   }
 
   Future<void> create(String name, DateTime date, double total, String path,
-      List<String> selectedOptions) {
+      Set<String> selectedOptions) {
     return _database.transaction(() async {
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
@@ -207,7 +212,8 @@ class TransactionRepository {
 
       for (int i = 0; i < selectedOptions.length; i++) {
         await _database.into(_database.myTag).insert(MyTagCompanion(
-            name: Value(selectedOptions[i]), id_transaction: Value(id)));
+            name: Value(selectedOptions.elementAt(i)),
+            id_transaction: Value(id)));
       }
     });
   }

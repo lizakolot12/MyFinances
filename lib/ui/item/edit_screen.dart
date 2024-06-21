@@ -112,7 +112,7 @@ class EditScreen extends StatelessWidget {
 
 class EditForm extends StatefulWidget {
   final Transaction? transaction;
-  final List<String> allOptions;
+  final Set<String> allOptions;
 
   const EditForm(
       {super.key, required this.transaction, required this.allOptions});
@@ -122,9 +122,9 @@ class EditForm extends StatefulWidget {
 }
 
 class EditFormState extends State<EditForm> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController amountController = TextEditingController();
-  List<String> savedSelectedOptions = [];
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  Set<String> savedSelectedOptions =  {};
   String path = "";
   File? image;
 
@@ -144,9 +144,9 @@ class EditFormState extends State<EditForm> {
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.transaction?.name ?? "";
-    amountController.text = widget.transaction?.total.toString() ?? "";
-    savedSelectedOptions = widget.transaction?.tags ?? [];
+    _nameController.text = widget.transaction?.name ?? "";
+    _amountController.text = widget.transaction?.total.toString() ?? "";
+    savedSelectedOptions = widget.transaction?.tags ??  {};
     path = widget.transaction?.path ?? "";
     print("path $path");
     image = File(path);
@@ -162,12 +162,12 @@ class EditFormState extends State<EditForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                controller: nameController,
+                controller: _nameController,
                 decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.label_name),
               ),
               TextFormField(
-                controller: amountController,
+                controller: _amountController,
                 decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.label_total),
                 keyboardType: TextInputType.number,
@@ -221,8 +221,8 @@ class EditFormState extends State<EditForm> {
           right: 16.0,
           child: ElevatedButton(
             onPressed: () {
-              String name = nameController.text;
-              double amount = double.tryParse(amountController.text) ?? 0;
+              String name = _nameController.text;
+              double amount = double.tryParse(_amountController.text) ?? 0;
               if (widget.transaction == null) {
                 context.read<TransactionItemBloc>().add(
                       CreateTransaction(
@@ -248,8 +248,8 @@ class EditFormState extends State<EditForm> {
 
   @override
   void dispose() {
-    nameController.dispose();
-    amountController.dispose();
+    _nameController.dispose();
+    _amountController.dispose();
     super.dispose();
   }
 }

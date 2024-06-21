@@ -44,11 +44,11 @@ class TransactionItem extends StatelessWidget {
               ),
             ],
           ),
-          if ((transaction.tags?.length ?? 0) > 0)
+          if ((transaction.tags.length) > 0)
             Wrap(
               spacing: 4,
               children: [
-                for (var i in transaction.tags ?? [])
+                for (var i in transaction.tags)
                   Chip(
                     padding: const EdgeInsets.symmetric(
                       vertical: 4,
@@ -118,7 +118,7 @@ class TransactionGridItem extends StatelessWidget {
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.all(4.0),
             child: Text(
-              transaction.tags?.join(" ") ?? "",
+              transaction.tags.join(" "),
             ),
           ),
         ),

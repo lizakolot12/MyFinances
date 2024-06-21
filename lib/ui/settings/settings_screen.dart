@@ -47,7 +47,6 @@ class AllSettingsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: BlocBuilder<SettingsBloc, SettingsState>(
                     builder: (context, state) {
-                      print("NEW STATE " + state.toString());
                       if (state is SettingsInitial) {
                         context.read<SettingsBloc>().add(GetAll());
                         return progress();
@@ -73,7 +72,7 @@ class AllSettingsScreen extends StatelessWidget {
 }
 
 class AllComponents extends StatelessWidget {
-  final List<String> tags;
+  final Set<String> tags;
 
   const AllComponents(this.tags, {super.key});
 
@@ -147,7 +146,7 @@ class LanguageSelectionButton extends StatelessWidget {
 }
 
 class ExpandableList extends StatelessWidget {
-  final _tags;
+  final Set<String>_tags;
 
   const ExpandableList(this._tags, {super.key});
 
@@ -169,12 +168,12 @@ class ExpandableList extends StatelessWidget {
                       children: List.generate(_tags.length,(index){
                         return GestureDetector(
                           onTap: () {
-                            settingsBloc.add(DeleteTag(_tags[index]));
-                            Navigator.of(context).pop();
+                            settingsBloc.add(DeleteTag(_tags.elementAt(index)));
+                           /* Navigator.of(context).pop();*/
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(16),
-                            child: Text(_tags[index]),
+                            child: Text(_tags.elementAt(index)),
                           ),
                         );
                       }),
