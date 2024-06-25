@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_study/data/data.dart';
 
-import '../../ui/util/provider_state_managment.dart';
+import '../../ui/util/provider_state_management.dart';
 
 part 'settings_event.dart';
 
@@ -16,7 +16,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Set<String> _allTags = {};
 
   SettingsBloc(
-      {required TransactionRepository repository, required Settings settings})
+      {required TransactionRepository repository, required Settings settings,})
       : _repository = repository,
         _settings = settings,
         super(SettingsInitial()) {

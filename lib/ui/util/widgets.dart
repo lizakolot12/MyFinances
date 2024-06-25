@@ -7,13 +7,15 @@ class ChipInputWidget extends StatefulWidget {
   final Function(Set<String>) onSelectedOptionsChanged;
   final Set<String> selectedOptions;
 
-  ChipInputWidget(
-      {required this.allOptions,
-      required this.onSelectedOptionsChanged,
-      required this.selectedOptions});
+  const ChipInputWidget({
+    super.key,
+    required this.allOptions,
+    required this.onSelectedOptionsChanged,
+    required this.selectedOptions,
+  });
 
   @override
-  _ChipInputWidgetState createState() => _ChipInputWidgetState();
+  State<ChipInputWidget> createState() => _ChipInputWidgetState();
 }
 
 class _ChipInputWidgetState extends State<ChipInputWidget> {
@@ -25,20 +27,22 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 10, maxHeight: 120),
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Wrap(
-                  spacing: 8,
-                  children: widget.selectedOptions.map<Widget>((option) {
-                    return Chip(
-                      label: Text(option),
-                      onDeleted: () {
-                        _handleDeleted(option);
-                      },
-                    );
-                  }).toList(),
-                ))),
+          constraints: const BoxConstraints(minHeight: 10, maxHeight: 120),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Wrap(
+              spacing: 8,
+              children: widget.selectedOptions.map<Widget>((option) {
+                return Chip(
+                  label: Text(option),
+                  onDeleted: () {
+                    _handleDeleted(option);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        ),
         TypeAheadField<String>(
           textFieldConfiguration: TextFieldConfiguration(
             controller: textEditingController,
@@ -50,8 +54,13 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
             },
           ),
           suggestionsCallback: (pattern) {
-            return widget.allOptions.where((option) =>
-                pattern.isNotEmpty && option.toLowerCase().contains(pattern.toLowerCase()));
+            return widget.allOptions.where(
+              (option) =>
+                  pattern.isNotEmpty &&
+                  option.toLowerCase().contains(
+                        pattern.toLowerCase(),
+                      ),
+            );
           },
           itemBuilder: (context, suggestion) {
             return ListTile(
@@ -59,12 +68,14 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
             );
           },
           noItemsFoundBuilder: (context) => SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                  onPressed: () {
-                    _handleSubmitted(textEditingController.text);
-                  },
-                  child: Text(AppLocalizations.of(context)!.create_new_tags))),
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () {
+                _handleSubmitted(textEditingController.text);
+              },
+              child: Text(AppLocalizations.of(context)!.create_new_tags),
+            ),
+          ),
           onSuggestionSelected: (suggestion) {
             _handleSubmitted(suggestion);
           },

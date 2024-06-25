@@ -17,11 +17,10 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
     on<GetAllTransactions>(
       (event, emit) async {
         emit(LoadingTransaction(List.empty(), 0));
-        await for (var list in _repository.getAll()) {
-          print("!!!!!!!!!!!!!!!!!!!!!!" + list.length.toString());
+        await for (final list in _repository.getAll()) {
           saved = list;
           total = 0;
-          for (var element in list) {
+          for (final element in list) {
             if (_isCurrentMonth(element.date)) {
               total += element.total;
             }
@@ -34,7 +33,7 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
     on<RemoveTransaction>(
       (event, emit) async {
         emit(LoadingTransaction(saved, total));
-        Transaction transaction = event.transaction;
+        final Transaction transaction = event.transaction;
         saved = saved.map((item) {
           if (item.id == transaction.id) {
             item.isProgress = true;
@@ -53,7 +52,7 @@ class TransactionListBloc extends Bloc<TransactionEvent, TransactionState> {
   }
 
   bool _isCurrentMonth(DateTime date) {
-    DateTime now = DateTime.now();
+    final DateTime now = DateTime.now();
     return date.year == now.year && date.month == now.month;
   }
 }

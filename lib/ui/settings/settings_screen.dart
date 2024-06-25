@@ -1,29 +1,28 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-
-import '../../bloc/settings/settings_bloc.dart';
-import '../../data/data.dart';
-import '../util/provider_state_managment.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_study/bloc/settings/settings_bloc.dart';
+import 'package:my_study/data/data.dart';
+import 'package:my_study/ui/util/provider_state_management.dart';
 import 'package:provider/provider.dart' as provider;
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Settings>(builder: (context, settings, child) {
-      return BlocProvider.value(
-        value: SettingsBloc(
-          repository: RepositoryProvider.of<TransactionRepository>(context),
-          settings: settings,
-        ),
-        child: AllSettingsScreen(),
-      );
-    });
+    return Consumer<Settings>(
+      builder: (context, settings, child) {
+        return BlocProvider.value(
+          value: SettingsBloc(
+            repository: RepositoryProvider.of<TransactionRepository>(context),
+            settings: settings,
+          ),
+          child: const AllSettingsScreen(),
+        );
+      },
+    );
   }
 }
 
@@ -47,7 +46,6 @@ class AllSettingsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: BlocBuilder<SettingsBloc, SettingsState>(
                     builder: (context, state) {
-                      print("NEW STATE " + state.toString());
                       if (state is SettingsInitial) {
                         context.read<SettingsBloc>().add(GetAll());
                         return progress();
@@ -79,7 +77,6 @@ class AllComponents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("new list " + tags.toString());
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,13 +149,17 @@ class ExpandableList extends StatefulWidget {
   const ExpandableList(this._tags, {super.key});
 
   @override
-  ExpandableListState createState() => ExpandableListState(_tags);
+  State<ExpandableList> createState() => _ExpandableListState();
 }
 
-class ExpandableListState extends State<ExpandableList> {
-  final Set<String> _categories;
+class _ExpandableListState extends State<ExpandableList> {
+  late Set<String> _categories;
 
-  ExpandableListState(this._categories);
+  @override
+  void initState() {
+    _categories = widget._tags;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +178,6 @@ class ExpandableListState extends State<ExpandableList> {
                     settingsBloc.add(DeleteTag(tag));
                     setState(() {
                       _categories.remove(tag);
-                      print(_categories.length.toString());
                     });
                   },
                 );
@@ -195,10 +195,14 @@ class DeleteTagsDialog extends StatefulWidget {
   final Set<String> categories;
   final Function(String) onTagDeleted;
 
-  const DeleteTagsDialog({super.key, required this.categories, required this.onTagDeleted});
+  const DeleteTagsDialog({
+    super.key,
+    required this.categories,
+    required this.onTagDeleted,
+  });
 
   @override
-  _DeleteTagsDialogState createState() => _DeleteTagsDialogState();
+  State<DeleteTagsDialog> createState() => _DeleteTagsDialogState();
 }
 
 class _DeleteTagsDialogState extends State<DeleteTagsDialog> {

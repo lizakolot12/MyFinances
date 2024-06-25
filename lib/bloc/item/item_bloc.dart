@@ -18,7 +18,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         super(Initial()) {
     on<NewTransaction>(
       (event, emit) async {
-        Set<String> allTags = await _repository.getAllTags();
+        final Set<String> allTags = await _repository.getAllTags();
         emit(NewItem(allTags));
         clearFile();
       },
@@ -27,9 +27,9 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     on<EditTransaction>(
       (event, emit) async {
         emit(Loading());
-        Future<Transaction> transactionFuture = _repository.get(event.id);
-        Transaction transaction = await transactionFuture;
-        Set<String> allTags = await _repository.getAllTags();
+        final Future<Transaction> transactionFuture = _repository.get(event.id);
+        final Transaction transaction = await transactionFuture;
+        final Set<String> allTags = await _repository.getAllTags();
         emit(EditedTransaction(transaction, allTags));
       },
     );
@@ -37,8 +37,8 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     on<SaveTransaction>(
       (event, emit) async {
         emit(Saving());
-        Transaction old = event.transaction;
-        String? newPath = await saveFile(old.path);
+        final Transaction old = event.transaction;
+        final String? newPath = await saveFile(old.path);
         _repository.edit(Transaction(old.id, old.name, old.date, old.total, newPath ?? "", old.tags));
         emit(Saved());
       },
@@ -53,7 +53,7 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
           final String formatted = formatter.format(now);
           name = formatted;
         }
-        String? newPath = await saveFile(event.path);
+        final String? newPath = await saveFile(event.path);
         _repository.create(
             name, now, event.total, newPath ?? "", event.selectedOptions);
         emit(Saved());
@@ -81,7 +81,6 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
     await image.copy(newPath);
     await image.delete();
 
-    print("Файл був скопійований до $newPath");
     return newPath;
   }
 
@@ -94,25 +93,18 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         return "";
       }
     }).toList();
-    print(currents);
     final systemPath = await getApplicationDocumentsDirectory();
     final folderPath = join(systemPath.path, _folderForImage);
     final directory = Directory(folderPath);
     if (await directory.exists()) {
-      print("isExist");
-      await for (var entity in directory.list()) {
-        print(entity);
+      await for (final entity in directory.list()) {
         if (entity is File) {
           final fileName = entity.path.split(Platform.pathSeparator).last;
-          print(fileName);
           if (!currents.contains(fileName)) {
             await entity.delete();
-            print('Файл $fileName видалено.');
           }
         }
       }
-    } else {
-      print('Папка $_folderForImage не існує.');
     }
   }
 }

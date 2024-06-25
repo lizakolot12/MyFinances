@@ -20,7 +20,7 @@ class MyTag extends Table {
 
   TextColumn get name => text()();
 
-  IntColumn get id_transaction => integer().references(TransactionItems, #id)();
+  IntColumn get idTransaction => integer().references(TransactionItems, #id)();
 }
 
 @DriftDatabase(tables: [TransactionItems, MyTag])

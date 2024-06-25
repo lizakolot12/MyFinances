@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/data.dart';
-import '../../bloc/item/item_bloc.dart';
-import 'edit_screen.dart';
+import 'package:my_study/bloc/item/item_bloc.dart';
+import 'package:my_study/data/data.dart';
+import 'package:my_study/ui/item/edit_screen.dart';
 
 class ItemScreen extends StatelessWidget {
   final int? transactionId;

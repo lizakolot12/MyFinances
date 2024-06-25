@@ -4,7 +4,7 @@ import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_fiel
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -16,16 +16,18 @@ class ChartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChartBloc, ChartState>(builder: (context, state) {
-      if (state is ChartInitial) {
-        context.read<ChartBloc>().add(GetAll());
-        return progress();
-      } else if (state is LoadedChart) {
-        return Data(list: state.data, tags: state.tags);
-      } else {
-        return progress();
-      }
-    });
+    return BlocBuilder<ChartBloc, ChartState>(
+      builder: (context, state) {
+        if (state is ChartInitial) {
+          context.read<ChartBloc>().add(GetAll());
+          return progress();
+        } else if (state is LoadedChart) {
+          return Data(list: state.data, tags: state.tags);
+        } else {
+          return progress();
+        }
+      },
+    );
   }
 
   Widget progress() {
@@ -86,7 +88,7 @@ class Data extends StatelessWidget {
           Center(child: Text(AppLocalizations.of(context)!.empty_chart))
         else
           SfCartesianChart(
-            primaryXAxis: CategoryAxis(),
+            primaryXAxis: const CategoryAxis(),
             legend: const Legend(isVisible: false),
             tooltipBehavior: TooltipBehavior(enable: true),
             series: <LineSeries<TotalData, String>>[

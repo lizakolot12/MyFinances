@@ -4,7 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
-import 'db/my_db.dart';
+import 'package:my_study/data/db/my_db.dart';
 
 class Transaction {
   final int _id;
@@ -12,17 +12,11 @@ class Transaction {
   final DateTime _date;
   final double _total;
   final String _path;
-  Set<String> _tags;
-  bool _isProgress = false;
+  Set<String> tags;
+  bool isProgress = false;
 
   Transaction(
-      this._id, this._name, this._date, this._total, this._path, this._tags);
-
-  Set<String> get tags => _tags;
-
-  set tags(Set<String> value) {
-    _tags = value;
-  }
+      this._id, this._name, this._date, this._total, this._path, this.tags,);
 
   String? get path => _path;
 
@@ -33,12 +27,6 @@ class Transaction {
   int get id => _id;
 
   DateTime get date => _date;
-
-  bool get isProgress => _isProgress;
-
-  set isProgress(bool value) {
-    _isProgress = value;
-  }
 }
 
 class TransactionRepository {
@@ -68,11 +56,11 @@ class TransactionRepository {
     final transactions = <Transaction>[];
 
     for (final row in rows) {
-      var current = row.readTable(_database.transactionItems);
+      final current = row.readTable(_database.transactionItems);
 
-      var found =
+      final found =
           transactions.firstWhereOrNull((element) => element.id == current.id);
-      var tag = row.readTableOrNull(_database.myTag)?.name;
+      final tag = row.readTableOrNull(_database.myTag)?.name;
       if (found != null) {
         if (tag != null) {
           found.tags.add(tag);
@@ -96,29 +84,26 @@ class TransactionRepository {
   }
 
   Stream<List<Transaction>> getAll(
-      {DateTime? start = null, DateTime? end = null}) {
-    var from = start ?? DateTime(0);
-    var until = end ?? DateTime.now();
-    print("!!!!$from");
-    print("!!!!$until");
+      {DateTime? start, DateTime? end,}) {
+    final from = start ?? DateTime(0);
+    final until = end ?? DateTime.now();
     final controller = StreamController<List<Transaction>>();
     _database
         .select(_database.transactionItems)
         .join([
           leftOuterJoin(
               _database.myTag,
-              _database.myTag.id_transaction
-                  .equalsExp(_database.transactionItems.id)),
+              _database.myTag.idTransaction
+                  .equalsExp(_database.transactionItems.id),),
         ])
         .watch()
         .listen((rows) {
-          var initial = _parse(rows);
-          print("dbbbbbbb" + initial.length.toString());
+          final initial = _parse(rows);
           List<Transaction>? transactions;
           if (start != null && end != null) {
             transactions = initial
                 .where((element) =>
-                    element.date.isAfter(from) && element.date.isBefore(until))
+                    element.date.isAfter(from) && element.date.isBefore(until),)
                 .toList();
           } else {
             transactions = initial;
@@ -135,12 +120,12 @@ class TransactionRepository {
           ..where((t) => t.id.equals(id)))
         .getSingle();
     return Transaction(
-        tran.id, tran.name, tran.date, tran.total, tran.path, {});
+        tran.id, tran.name, tran.date, tran.total, tran.path, {},);
   }
 
   Future<Set<String>> getAllTags() async {
-    var list = await (_database.select(_database.myTag)).get();
-    Set<String> result = {};
+    final list = await _database.select(_database.myTag).get();
+    final Set<String> result = {};
     for (int i = 0; i < list.length; i++) {
       if (!result.contains(list[i].name)) {
         result.add(list[i].name);
@@ -150,13 +135,13 @@ class TransactionRepository {
   }
 
   Future<Transaction> get(int id) async {
-    var res = await (_database.select(_database.transactionItems)
+    final res = await (_database.select(_database.transactionItems)
           ..where((t) => t.id.equals(id)))
         .join([
       leftOuterJoin(
           _database.myTag,
-          _database.myTag.id_transaction
-              .equalsExp(_database.transactionItems.id)),
+          _database.myTag.idTransaction
+              .equalsExp(_database.transactionItems.id),),
     ]).get();
 
     return _parse(res)[0];
@@ -182,7 +167,7 @@ class TransactionRepository {
       final String formatted = formatter.format(now);
       name = formatted;
     }
-    await _database.update(_database.transactionItems)
+    _database.update(_database.transactionItems)
       ..where((t) => t.id.equals(updatedTransaction.id))
       ..write(
         TransactionItemsCompanion(
@@ -190,30 +175,30 @@ class TransactionRepository {
             name: Value(name),
             date: Value(updatedTransaction.date),
             total: Value(updatedTransaction.total),
-            path: Value(updatedTransaction.path ?? "")),
+            path: Value(updatedTransaction.path ?? ""),),
       );
     await (_database.delete(_database.myTag)
-          ..where((t) => t.id_transaction.equals(updatedTransaction.id)))
+          ..where((t) => t.idTransaction.equals(updatedTransaction.id)))
         .go();
     for (int i = 0; i < updatedTransaction.tags.length; i++) {
       await _database.into(_database.myTag).insert(MyTagCompanion(
           name: Value(updatedTransaction.tags.elementAt(i)),
-          id_transaction: Value(updatedTransaction.id)));
+          id_transaction: Value(updatedTransaction.id),),);
     }
   }
 
   Future<void> create(String name, DateTime date, double total, String path,
-      Set<String> selectedOptions) {
+      Set<String> selectedOptions,) {
     return _database.transaction(() async {
       var id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
-                name: name, date: date, total: total, path: path),
+                name: name, date: date, total: total, path: path,),
           );
 
       for (int i = 0; i < selectedOptions.length; i++) {
         await _database.into(_database.myTag).insert(MyTagCompanion(
             name: Value(selectedOptions.elementAt(i)),
-            id_transaction: Value(id)));
+            id_transaction: Value(id),),);
       }
     });
   }

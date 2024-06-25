@@ -309,14 +309,14 @@ class $MyTagTable extends MyTag with TableInfo<$MyTagTable, MyTagData> {
   static const VerificationMeta _id_transactionMeta =
       const VerificationMeta('id_transaction');
   @override
-  late final GeneratedColumn<int> id_transaction = GeneratedColumn<int>(
+  late final GeneratedColumn<int> idTransaction = GeneratedColumn<int>(
       'id_transaction', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES transaction_items (id)'));
   @override
-  List<GeneratedColumn> get $columns => [id, name, id_transaction];
+  List<GeneratedColumn> get $columns => [id, name, idTransaction];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -339,7 +339,7 @@ class $MyTagTable extends MyTag with TableInfo<$MyTagTable, MyTagData> {
     if (data.containsKey('id_transaction')) {
       context.handle(
           _id_transactionMeta,
-          id_transaction.isAcceptableOrUnknown(
+          idTransaction.isAcceptableOrUnknown(
               data['id_transaction']!, _id_transactionMeta));
     } else if (isInserting) {
       context.missing(_id_transactionMeta);

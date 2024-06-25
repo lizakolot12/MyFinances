@@ -11,10 +11,10 @@ DatabaseConnection connect() {
       driftWorkerUri: Uri.parse('drift_worker.js'),
     );
 
-    if (db.missingFeatures.isNotEmpty) {
+  /*  if (db.missingFeatures.isNotEmpty) {
       print('Using ${db.chosenImplementation} due to unsupported '
           'browser features: ${db.missingFeatures}');
-    }
+    }*/
 
     return db.resolvedExecutor;
   }));
