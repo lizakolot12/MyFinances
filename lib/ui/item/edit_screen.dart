@@ -141,6 +141,15 @@ class EditFormState extends State<EditForm> {
     }
   }
 
+  void _openImage(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FullScreenDialog(imagePath: path);
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -183,7 +192,7 @@ class EditFormState extends State<EditForm> {
                 ),
               ),
               InkWell(
-                onTap: _pickImage,
+                onTap: _openImage,
                 child: Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -251,5 +260,38 @@ class EditFormState extends State<EditForm> {
     _nameController.dispose();
     _amountController.dispose();
     super.dispose();
+  }
+}
+class FullScreenDialog extends StatelessWidget {
+  final String imagePath;
+
+  const FullScreenDialog({required this.imagePath, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(0),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.file(
+              File(imagePath),
+              /*fit: BoxFit.none,*/
+            ),
+          ),
+          Positioned(
+            top: 40,
+            right: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 30),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

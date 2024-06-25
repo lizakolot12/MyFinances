@@ -55,39 +55,54 @@ class AllTransactionView extends StatelessWidget {
     return ListView.builder(
       itemCount: list.length,
       padding: const EdgeInsets.only(bottom: 70.0),
-      itemBuilder: (context, index) => ListTile(
-          title: Row(
-            children: [
-              Text(
-                list[index].name,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    formatter.format(
-                      list[index].date,
-                    ),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ))
-            ],
-          ),
-          subtitle: Text(
-            list[index].total.toString(),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          trailing: IconButton(
-            disabledColor: Colors.black12,
-            icon: const Icon(
-              Icons.delete,
+      itemBuilder: (context, index) => Card(
+        child: ListTile(
+            title: Row(
+              children: [
+                Text(
+                  list[index].name,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      formatter.format(
+                        list[index].date,
+                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ))
+              ],
             ),
-            onPressed: list[index].isProgress
-                ? null
-                : () => context.read<TransactionListBloc>().add(
-                      RemoveTransaction(list[index]),
-                    ),
-          ),
-          onTap: () => onItemChose.call(list[index].id)),
+            subtitle: Row(children: [
+              if (list[index].path?.isNotEmpty ?? false)
+                const Icon(
+                  Icons.receipt_long_rounded,
+                )
+              else
+                const Icon(
+                  Icons.remove,
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  list[index].total.toString(),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ]),
+            trailing: IconButton(
+              disabledColor: Colors.black12,
+              icon: const Icon(
+                Icons.delete,
+              ),
+              onPressed: list[index].isProgress
+                  ? null
+                  : () => context.read<TransactionListBloc>().add(
+                        RemoveTransaction(list[index]),
+                      ),
+            ),
+            onTap: () => onItemChose.call(list[index].id)),
+      ),
     );
   }
 }

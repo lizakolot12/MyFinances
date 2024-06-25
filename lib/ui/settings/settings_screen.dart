@@ -195,7 +195,7 @@ class DeleteTagsDialog extends StatefulWidget {
   final Set<String> categories;
   final Function(String) onTagDeleted;
 
-  DeleteTagsDialog({required this.categories, required this.onTagDeleted});
+  const DeleteTagsDialog({super.key, required this.categories, required this.onTagDeleted});
 
   @override
   _DeleteTagsDialogState createState() => _DeleteTagsDialogState();
@@ -223,7 +223,7 @@ class _DeleteTagsDialogState extends State<DeleteTagsDialog> {
                     onTap: () {
                       setState(() {
                         _categories.remove(tag);
-                        widget.onTagDeleted(tag); // Notify the parent widget
+                        widget.onTagDeleted(tag);
                       });
                     },
                     child: Padding(

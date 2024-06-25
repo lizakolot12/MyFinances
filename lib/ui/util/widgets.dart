@@ -51,7 +51,7 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
           ),
           suggestionsCallback: (pattern) {
             return widget.allOptions.where((option) =>
-                option.toLowerCase().contains(pattern.toLowerCase()));
+                pattern.isNotEmpty && option.toLowerCase().contains(pattern.toLowerCase()));
           },
           itemBuilder: (context, suggestion) {
             return ListTile(
@@ -64,12 +64,7 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
                   onPressed: () {
                     _handleSubmitted(textEditingController.text);
                   },
-                  child:
-                 /* Align(
-                      alignment: Alignment.topLeft,
-                      child:*/
-                      Text(
-                          AppLocalizations.of(context)!.create_new_tags))),
+                  child: Text(AppLocalizations.of(context)!.create_new_tags))),
           onSuggestionSelected: (suggestion) {
             _handleSubmitted(suggestion);
           },
