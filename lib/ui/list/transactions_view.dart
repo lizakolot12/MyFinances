@@ -61,6 +61,7 @@ class AllTransactionView extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 70.0),
       itemBuilder: (context, index) => Card(
         child: ListTile(
+          style: ListTileStyle.list,
           title: Row(
             children: [
               Text(

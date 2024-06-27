@@ -19,4 +19,3 @@ class GetFilteredByDateRange extends ChartEvent {
 
   GetFilteredByDateRange(this.start, this.end);
 }
-

@@ -16,4 +16,3 @@ class SwitchLanguage extends SettingsEvent {
   late final String locale;
   SwitchLanguage(this.locale);
 }
-

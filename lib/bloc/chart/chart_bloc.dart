@@ -7,6 +7,7 @@ part 'chart_event.dart';
 part 'chart_state.dart';
 
 class ChartBloc extends Bloc<ChartEvent, ChartState> {
+  static const String other = "Інше";
   final TransactionRepository _repository;
   List<String>? _savedTags;
   DateTime? _start;
@@ -20,13 +21,13 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
         emit(ChartInitial());
         final List<TotalData> result = List.empty(growable: true);
         final Map<String, double> map = {};
-        map["Інше"] = 0;
-        await for (var list in _repository.getAll()) {
+        map[other] = 0;
+        await for (final list in _repository.getAll()) {
           for (final Transaction tr in list) {
             if (tr.tags.isEmpty) {
-              map["Інше"] = (map["Інше"] ?? 0) + tr.total;
+              map[other] = (map[other] ?? 0) + tr.total;
             } else {
-              for (String tg in tr.tags) {
+              for (final String tg in tr.tags) {
                 map[tg] = (map[tg] ?? 0) + tr.total;
               }
             }
@@ -40,20 +41,20 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
     on<GetFilteredByTags>(
       (event, emit) async {
         _savedTags = event.tagsAdded;
-        List<TotalData> result = List.empty(growable: true);
-        Map<String, double> map = {};
-        map["Інше"] = 0;
-        await for (var list in _repository.getAll(start: _start, end: _end)) {
-          for (Transaction tr in list) {
+        final List<TotalData> result = List.empty(growable: true);
+        final Map<String, double> map = {};
+        map[other] = 0;
+        await for (final list in _repository.getAll(start: _start, end: _end)) {
+          for (final Transaction tr in list) {
             if (tr.tags.isEmpty) {
-              map["Інше"] = (map["Інше"] ?? 0) + tr.total;
+              map[other] = (map[other] ?? 0) + tr.total;
             } else {
-              for (String tg in tr.tags) {
+              for (final String tg in tr.tags) {
                 map[tg] = (map[tg] ?? 0) + tr.total;
               }
             }
           }
-          var allTags = map.keys.toList();
+          final allTags = map.keys.toList();
           map.removeWhere((key, value) => !event.tagsAdded.contains(key));
           map.forEach((k, v) => result.add(TotalData(k, v)));
           emit(LoadedChart(result, allTags));
@@ -65,20 +66,20 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
       (event, emit) async {
         _start = event.start;
         _end = event.end;
-        List<TotalData> result = List.empty(growable: true);
-        Map<String, double> map = {};
-        map["Інше"] = 0;
-        await for (var list in _repository.getAll(start: _start, end: _end)) {
+        final List<TotalData> result = List.empty(growable: true);
+        final Map<String, double> map = {};
+        map[other] = 0;
+        await for (final list in _repository.getAll(start: _start, end: _end)) {
           for (final Transaction tr in list) {
             if (tr.tags.isEmpty) {
-              map["Інше"] = (map["Інше"] ?? 0) + tr.total;
+              map[other] = (map[other] ?? 0) + tr.total;
             } else {
-              for (String tg in tr.tags) {
+              for (final String tg in tr.tags) {
                 map[tg] = (map[tg] ?? 0) + tr.total;
               }
             }
           }
-          var allTags = map.keys.toList();
+          final allTags = map.keys.toList();
           if (_savedTags?.isNotEmpty ?? false) {
             map.removeWhere((key, value) => !_savedTags!.contains(key));
           }

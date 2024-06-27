@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:my_study/data/data.dart';
 
-import '../../ui/util/provider_state_management.dart';
+import 'package:my_study/ui/util/provider_state_management.dart';
 
 part 'settings_event.dart';
 

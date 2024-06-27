@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:my_study/bloc/item/item_event.dart';
+import 'package:my_study/bloc/item/item_state.dart';
 import 'package:my_study/data/data.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'item_event.dart';
-import 'item_state.dart';
 
 class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
   static const String _folderForImage = 'my_receipts';
@@ -39,7 +38,16 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         emit(Saving());
         final Transaction old = event.transaction;
         final String? newPath = await saveFile(old.path);
-        _repository.edit(Transaction(old.id, old.name, old.date, old.total, newPath ?? "", old.tags));
+        _repository.edit(
+          Transaction(
+            old.id,
+            old.name,
+            old.date,
+            old.total,
+            newPath ?? "",
+            old.tags,
+          ),
+        );
         emit(Saved());
       },
     );
@@ -55,25 +63,30 @@ class TransactionItemBloc extends Bloc<ItemEvent, ItemState> {
         }
         final String? newPath = await saveFile(event.path);
         _repository.create(
-            name, now, event.total, newPath ?? "", event.selectedOptions);
+          name,
+          now,
+          event.total,
+          newPath ?? "",
+          event.selectedOptions,
+        );
         emit(Saved());
       },
     );
   }
 
   Future<String?> saveFile(String? path) async {
-    if(path == null) {
+    if (path == null) {
       return null;
     }
     final image = File(path);
-    if(!await image.exists()){
+    if (!await image.exists()) {
       return null;
     }
     final directory = await getApplicationDocumentsDirectory();
     final folderPath = join(directory.path, _folderForImage);
 
     if (!await Directory(folderPath).exists()) {
-    await Directory(folderPath).create(recursive: true);
+      await Directory(folderPath).create(recursive: true);
     }
 
     final newPath = join(folderPath, basename(path));

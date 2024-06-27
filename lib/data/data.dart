@@ -116,7 +116,7 @@ class TransactionRepository {
   }
 
   Future<Transaction> getSimple(int id) async {
-    var tran = await (_database.select(_database.transactionItems)
+    final tran = await (_database.select(_database.transactionItems)
           ..where((t) => t.id.equals(id)))
         .getSingle();
     return Transaction(
@@ -190,7 +190,7 @@ class TransactionRepository {
   Future<void> create(String name, DateTime date, double total, String path,
       Set<String> selectedOptions,) {
     return _database.transaction(() async {
-      var id = await _database.into(_database.transactionItems).insert(
+      final id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
                 name: name, date: date, total: total, path: path,),
           );

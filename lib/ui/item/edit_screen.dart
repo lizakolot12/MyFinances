@@ -150,7 +150,7 @@ class EditFormState extends State<EditForm> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return FullScreenDialog(imagePath: path);
+        return ImageFullScreenDialog(imagePath: path);
       },
     );
   }
@@ -283,10 +283,10 @@ class EditFormState extends State<EditForm> {
   }
 }
 
-class FullScreenDialog extends StatelessWidget {
+class ImageFullScreenDialog extends StatelessWidget {
   final String imagePath;
 
-  const FullScreenDialog({required this.imagePath, super.key});
+  const ImageFullScreenDialog({required this.imagePath, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +298,6 @@ class FullScreenDialog extends StatelessWidget {
           Positioned.fill(
             child: Image.file(
               File(imagePath),
-              /*fit: BoxFit.none,*/
             ),
           ),
           Positioned(
