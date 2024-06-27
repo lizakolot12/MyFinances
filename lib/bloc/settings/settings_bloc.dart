@@ -15,9 +15,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final Settings _settings;
   Set<String> _allTags = {};
 
-  SettingsBloc(
-      {required TransactionRepository repository, required Settings settings,})
-      : _repository = repository,
+  SettingsBloc({
+    required TransactionRepository repository,
+    required Settings settings,
+  })  : _repository = repository,
         _settings = settings,
         super(SettingsInitial()) {
     on<GetAll>((event, emit) async {

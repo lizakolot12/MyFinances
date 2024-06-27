@@ -84,7 +84,6 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
             map.removeWhere((key, value) => !_savedTags!.contains(key));
           }
 
-
           map.forEach((k, v) => result.add(TotalData(k, v)));
           emit(LoadedChart(result, allTags));
         }

@@ -9,7 +9,7 @@
 # packages, and plugins designed to encourage good coding practices.
 analyzer:
   errors:
-    depend_on_referenced_packages: ignore ignore ignore ignore
+    depend_on_referenced_packages: ignore
     implementation_imports: ignore
 include: package:lint/analysis_options.yaml
 

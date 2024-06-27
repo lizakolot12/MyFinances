@@ -6,7 +6,6 @@ abstract class SettingsEvent {}
 class GetAll extends SettingsEvent {}
 
 class DeleteTag extends SettingsEvent {
-
   late final String tag;
 
   DeleteTag(this.tag);

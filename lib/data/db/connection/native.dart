@@ -16,6 +16,7 @@ LazyDatabase connect() {
     return NativeDatabase.createInBackground(file);
   });
 }
+
 Future<void> validateDatabaseSchema(GeneratedDatabase database) async {
   if (kDebugMode) {
     await VerifySelf(database).validateDatabaseSchema();
