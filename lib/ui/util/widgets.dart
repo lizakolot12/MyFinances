@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ChipInputWidget extends StatefulWidget {
   final Set<String> allOptions;
@@ -29,7 +29,6 @@ class _ChipInputWidgetState extends State<ChipInputWidget> {
         ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 10, maxHeight: 120),
           child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
             child: Wrap(
               spacing: 8,
               children: widget.selectedOptions.map<Widget>((option) {

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_field.dart';
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:my_study/bloc/chart/chart_bloc.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
-import '../../bloc/chart/chart_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChartScreen extends StatelessWidget {
   const ChartScreen({super.key});
@@ -89,7 +88,6 @@ class Data extends StatelessWidget {
         else
           SfCartesianChart(
             primaryXAxis: const CategoryAxis(),
-            legend: const Legend(isVisible: false),
             tooltipBehavior: TooltipBehavior(enable: true),
             series: <LineSeries<TotalData, String>>[
               LineSeries<TotalData, String>(

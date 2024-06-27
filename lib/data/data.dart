@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports, depend_on_referenced_packages
+
 import 'dart:async';
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:drift/drift.dart';
@@ -16,7 +18,13 @@ class Transaction {
   bool isProgress = false;
 
   Transaction(
-      this._id, this._name, this._date, this._total, this._path, this.tags,);
+    this._id,
+    this._name,
+    this._date,
+    this._total,
+    this._path,
+    this.tags,
+  );
 
   String? get path => _path;
 
@@ -83,8 +91,10 @@ class TransactionRepository {
     return transactions;
   }
 
-  Stream<List<Transaction>> getAll(
-      {DateTime? start, DateTime? end,}) {
+  Stream<List<Transaction>> getAll({
+    DateTime? start,
+    DateTime? end,
+  }) {
     final from = start ?? DateTime(0);
     final until = end ?? DateTime.now();
     final controller = StreamController<List<Transaction>>();
@@ -92,9 +102,10 @@ class TransactionRepository {
         .select(_database.transactionItems)
         .join([
           leftOuterJoin(
-              _database.myTag,
-              _database.myTag.idTransaction
-                  .equalsExp(_database.transactionItems.id),),
+            _database.myTag,
+            _database.myTag.idTransaction
+                .equalsExp(_database.transactionItems.id),
+          ),
         ])
         .watch()
         .listen((rows) {
@@ -102,8 +113,11 @@ class TransactionRepository {
           List<Transaction>? transactions;
           if (start != null && end != null) {
             transactions = initial
-                .where((element) =>
-                    element.date.isAfter(from) && element.date.isBefore(until),)
+                .where(
+                  (element) =>
+                      element.date.isAfter(from) &&
+                      element.date.isBefore(until),
+                )
                 .toList();
           } else {
             transactions = initial;
@@ -120,7 +134,13 @@ class TransactionRepository {
           ..where((t) => t.id.equals(id)))
         .getSingle();
     return Transaction(
-        tran.id, tran.name, tran.date, tran.total, tran.path, {},);
+      tran.id,
+      tran.name,
+      tran.date,
+      tran.total,
+      tran.path,
+      {},
+    );
   }
 
   Future<Set<String>> getAllTags() async {
@@ -139,9 +159,9 @@ class TransactionRepository {
           ..where((t) => t.id.equals(id)))
         .join([
       leftOuterJoin(
-          _database.myTag,
-          _database.myTag.idTransaction
-              .equalsExp(_database.transactionItems.id),),
+        _database.myTag,
+        _database.myTag.idTransaction.equalsExp(_database.transactionItems.id),
+      ),
     ]).get();
 
     return _parse(res)[0];
@@ -171,34 +191,50 @@ class TransactionRepository {
       ..where((t) => t.id.equals(updatedTransaction.id))
       ..write(
         TransactionItemsCompanion(
-            id: Value(updatedTransaction.id),
-            name: Value(name),
-            date: Value(updatedTransaction.date),
-            total: Value(updatedTransaction.total),
-            path: Value(updatedTransaction.path ?? ""),),
+          id: Value(updatedTransaction.id),
+          name: Value(name),
+          date: Value(updatedTransaction.date),
+          total: Value(updatedTransaction.total),
+          path: Value(updatedTransaction.path ?? ""),
+        ),
       );
     await (_database.delete(_database.myTag)
           ..where((t) => t.idTransaction.equals(updatedTransaction.id)))
         .go();
     for (int i = 0; i < updatedTransaction.tags.length; i++) {
-      await _database.into(_database.myTag).insert(MyTagCompanion(
-          name: Value(updatedTransaction.tags.elementAt(i)),
-          id_transaction: Value(updatedTransaction.id),),);
+      await _database.into(_database.myTag).insert(
+            MyTagCompanion(
+              name: Value(updatedTransaction.tags.elementAt(i)),
+              id_transaction: Value(updatedTransaction.id),
+            ),
+          );
     }
   }
 
-  Future<void> create(String name, DateTime date, double total, String path,
-      Set<String> selectedOptions,) {
+  Future<void> create(
+    String name,
+    DateTime date,
+    double total,
+    String path,
+    Set<String> selectedOptions,
+  ) {
     return _database.transaction(() async {
       final id = await _database.into(_database.transactionItems).insert(
             TransactionItemsCompanion.insert(
-                name: name, date: date, total: total, path: path,),
+              name: name,
+              date: date,
+              total: total,
+              path: path,
+            ),
           );
 
       for (int i = 0; i < selectedOptions.length; i++) {
-        await _database.into(_database.myTag).insert(MyTagCompanion(
-            name: Value(selectedOptions.elementAt(i)),
-            id_transaction: Value(id),),);
+        await _database.into(_database.myTag).insert(
+              MyTagCompanion(
+                name: Value(selectedOptions.elementAt(i)),
+                id_transaction: Value(id),
+              ),
+            );
       }
     });
   }
