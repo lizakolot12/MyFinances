@@ -52,53 +52,66 @@ class Data extends StatelessWidget {
     }
   }
 
+  void _onCancelDate(BuildContext context) {
+    context.read<ChartBloc>().add(
+          GetAll(),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SfDateRangePicker(
-          selectionMode: DateRangePickerSelectionMode.range,
-          showActionButtons: true,
-          onSubmit: (args) {
-            _onSelectionChanged(context, args);
-          },
-        ),
-        MultiSelectBottomSheetField(
-          initialChildSize: 0.4,
-          listType: MultiSelectListType.CHIP,
-          searchable: true,
-          buttonText: Text(AppLocalizations.of(context)!.tags_labels),
-          title: Text(AppLocalizations.of(context)!.tags),
-          items: tags.map((e) => MultiSelectItem<String>(e, e)).toList(),
-          onConfirm: (values) {
-            context.read<ChartBloc>().add(
-                  GetFilteredByTags(values.map((e) => e.toString()).toList()),
-                );
-          },
-          chipDisplay: MultiSelectChipDisplay(
-            onTap: (value) {
-              /*  setState(() {
-                _selectedAnimals2.remove(value);
-              });*/
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SfDateRangePicker(
+            confirmText: AppLocalizations.of(context)!.button_ok,
+            cancelText: AppLocalizations.of(context)!.button_cancel,
+            selectionMode: DateRangePickerSelectionMode.range,
+            showActionButtons: true,
+            onCancel: () => _onCancelDate(context),
+            onSubmit: (args) {
+              _onSelectionChanged(context, args);
             },
           ),
-        ),
-        if (list.isEmpty)
-          Center(child: Text(AppLocalizations.of(context)!.empty_chart))
-        else
-          SfCartesianChart(
-            primaryXAxis: const CategoryAxis(),
-            tooltipBehavior: TooltipBehavior(enable: true),
-            series: <LineSeries<TotalData, String>>[
-              LineSeries<TotalData, String>(
-                dataSource: list,
-                xValueMapper: (TotalData data, _) => data.categoryName,
-                yValueMapper: (TotalData data, _) => data.total,
-                dataLabelSettings: const DataLabelSettings(isVisible: true),
-              ),
-            ],
+          MultiSelectBottomSheetField(
+            initialChildSize: 0.4,
+            listType: MultiSelectListType.CHIP,
+            searchable: true,
+            confirmText: Text(AppLocalizations.of(context)!.button_ok),
+            cancelText: Text(AppLocalizations.of(context)!.button_cancel),
+            buttonText: Text(AppLocalizations.of(context)!.tags_labels),
+            title: Text(AppLocalizations.of(context)!.tags),
+            items: tags.map((e) => MultiSelectItem<String>(e, e)).toList(),
+            onConfirm: (values) {
+              context.read<ChartBloc>().add(
+                    GetFilteredByTags(values.map((e) => e.toString()).toList()),
+                  );
+            },
+            chipDisplay: MultiSelectChipDisplay(
+              onTap: (value) {
+                /*  setState(() {
+                _selectedAnimals2.remove(value);
+              });*/
+              },
+            ),
           ),
-      ],
+          if (list.isEmpty)
+            Center(child: Text(AppLocalizations.of(context)!.empty_chart))
+          else
+            SfCartesianChart(
+              primaryXAxis: const CategoryAxis(),
+              tooltipBehavior: TooltipBehavior(enable: true),
+              series: <LineSeries<TotalData, String>>[
+                LineSeries<TotalData, String>(
+                  dataSource: list,
+                  xValueMapper: (TotalData data, _) => data.categoryName,
+                  yValueMapper: (TotalData data, _) => data.total,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 }

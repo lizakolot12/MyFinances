@@ -19,10 +19,10 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
     on<GetAll>(
       (event, emit) async {
         emit(ChartInitial());
-        final List<TotalData> result = List.empty(growable: true);
-        final Map<String, double> map = {};
-        map[other] = 0;
         await for (final list in _repository.getAll()) {
+          final List<TotalData> result = List.empty(growable: true);
+          final Map<String, double> map = {};
+          map[other] = 0;
           for (final Transaction tr in list) {
             if (tr.tags.isEmpty) {
               map[other] = (map[other] ?? 0) + tr.total;
@@ -41,10 +41,10 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
     on<GetFilteredByTags>(
       (event, emit) async {
         _savedTags = event.tagsAdded;
-        final List<TotalData> result = List.empty(growable: true);
-        final Map<String, double> map = {};
-        map[other] = 0;
         await for (final list in _repository.getAll(start: _start, end: _end)) {
+          final List<TotalData> result = List.empty(growable: true);
+          final Map<String, double> map = {};
+          map[other] = 0;
           for (final Transaction tr in list) {
             if (tr.tags.isEmpty) {
               map[other] = (map[other] ?? 0) + tr.total;
@@ -55,7 +55,7 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
             }
           }
           final allTags = map.keys.toList();
-          map.removeWhere((key, value) => !event.tagsAdded.contains(key));
+          map.removeWhere((key, value) => !event.tagsAdded.contains(key) && event.tagsAdded.isNotEmpty );
           map.forEach((k, v) => result.add(TotalData(k, v)));
           emit(LoadedChart(result, allTags));
         }
@@ -66,10 +66,10 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
       (event, emit) async {
         _start = event.start;
         _end = event.end;
-        final List<TotalData> result = List.empty(growable: true);
-        final Map<String, double> map = {};
-        map[other] = 0;
         await for (final list in _repository.getAll(start: _start, end: _end)) {
+          final List<TotalData> result = List.empty(growable: true);
+          final Map<String, double> map = {};
+          map[other] = 0;
           for (final Transaction tr in list) {
             if (tr.tags.isEmpty) {
               map[other] = (map[other] ?? 0) + tr.total;

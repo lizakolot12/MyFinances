@@ -17,7 +17,7 @@ import 'package:provider/provider.dart' as provider;
 void main() {
   runApp(
     provider.ChangeNotifierProvider(
-      create: (context) => Settings(const Locale('en'), true),
+      create: (context) => Settings(const Locale('uk'), true),
       child: MyApp(),
     ),
   );

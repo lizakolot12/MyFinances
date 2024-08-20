@@ -20,7 +20,7 @@
   "label_total": "Total",
   "label_save": "Save",
   "empty_chart":"There is no record",
-  "take_photo":"Receipt",
+  "take_photo":"Photo of receipt",
   "month_total":"Total for the last month:",
   "tags_labels": "Choose categories",
   "tags": "Categories",
@@ -29,5 +29,7 @@
   "delete_tags": "Delete categories",
   "create_new_tags": "Create category",
   "category_label": "Category",
-  "not_categories": "Empty category list"
+  "not_categories": "Empty category list",
+  "button_ok": "OK",
+  "button_cancel": "Cancel"
 }

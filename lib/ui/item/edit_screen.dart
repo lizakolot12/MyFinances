@@ -171,7 +171,6 @@ class EditFormState extends State<EditForm> {
       children: [
         SingleChildScrollView(
           child: SizedBox(
-            height: 1240,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -237,38 +236,45 @@ class EditFormState extends State<EditForm> {
             ),
           ),
         ),
-        Positioned(
-          bottom: 16.0,
-          right: 16.0,
-          child: ElevatedButton(
-            onPressed: () {
-              final String name = _nameController.text;
-              final double amount =
-                  double.tryParse(_amountController.text) ?? 0;
-              if (widget.transaction == null) {
-                context.read<TransactionItemBloc>().add(
-                      CreateTransaction(
-                        name,
-                        amount,
-                        path,
-                        savedSelectedOptions,
-                      ),
-                    );
-              } else {
-                final Transaction transaction = Transaction(
-                  widget.transaction?.id ?? 0,
-                  name,
-                  widget.transaction!.date,
-                  amount,
-                  path,
-                  savedSelectedOptions,
-                );
-                context.read<TransactionItemBloc>().add(
-                      SaveTransaction(transaction),
-                    );
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.label_save),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: FilledButton(
+              onPressed: () {
+                final String name = _nameController.text;
+                final double amount =
+                    double.tryParse(_amountController.text) ?? 0;
+                if (widget.transaction == null) {
+                  context.read<TransactionItemBloc>().add(
+                        CreateTransaction(
+                          name,
+                          amount,
+                          path,
+                          savedSelectedOptions,
+                        ),
+                      );
+                } else {
+                  final Transaction transaction = Transaction(
+                    widget.transaction?.id ?? 0,
+                    name,
+                    widget.transaction!.date,
+                    amount,
+                    path,
+                    savedSelectedOptions,
+                  );
+                  context.read<TransactionItemBloc>().add(
+                        SaveTransaction(transaction),
+                      );
+                }
+              },
+              child: Text(
+                AppLocalizations.of(context)!.label_save,
+                style: const TextStyle(
+                  fontSize: 24,
+                ),
+              ),
+            ),
           ),
         ),
       ],

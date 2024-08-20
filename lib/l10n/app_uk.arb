@@ -3,12 +3,12 @@
   "mainDesription": "Що було куплено нещодавно",
   "currents": "Поточні",
   "reports": "Звіти",
-  "edit_title": "Ввід даних",
+  "edit_title": "Введіть дані",
   "label_name": "Назва",
   "label_total": "Сума",
   "label_save": "Зберегти",
-  "empty_chart":"Немає жодного запису",
-  "take_photo":"Фото чеку",
+  "empty_chart":"Відсутні дані по категоріях",
+  "take_photo":"Додати фото чеку",
   "month_total":"Всього за останній місяць:",
   "tags_labels": "Вибери категорії",
   "tags": "Категорії",
@@ -17,5 +17,7 @@
   "delete_tags": "Видалити категорії",
   "create_new_tags": "Створити категорію",
   "category_label": "Категорія",
-  "not_categories": "Відсутні категорії"
+  "not_categories": "Відсутні категорії",
+  "button_ok": "Так",
+  "button_cancel": "Відмінити"
 }
