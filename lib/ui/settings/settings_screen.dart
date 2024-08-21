@@ -14,6 +14,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Settings>(
       builder: (context, settings, child) {
+        print("first " + settings.hashCode.toString());
         return BlocProvider.value(
           value: SettingsBloc(
             repository: RepositoryProvider.of<TransactionRepository>(context),
@@ -33,6 +34,7 @@ class AllSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Settings>(
       builder: (context, settings, child) {
+        print("settins" + settings.hashCode.toString() + "  " + settings.locale.toString());
         return Localizations.override(
           context: context,
           locale: settings.locale,
@@ -172,7 +174,7 @@ class _ExpandableListState extends State<ExpandableList> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return DeleteTagsDialog(
+                return _DeleteTagsDialog(
                   categories: _categories,
                   onTagDeleted: (String tag) {
                     settingsBloc.add(DeleteTag(tag));
@@ -191,21 +193,21 @@ class _ExpandableListState extends State<ExpandableList> {
   }
 }
 
-class DeleteTagsDialog extends StatefulWidget {
+class _DeleteTagsDialog extends StatefulWidget {
   final Set<String> categories;
   final Function(String) onTagDeleted;
 
-  const DeleteTagsDialog({
+  const _DeleteTagsDialog({
     super.key,
     required this.categories,
     required this.onTagDeleted,
   });
 
   @override
-  State<DeleteTagsDialog> createState() => _DeleteTagsDialogState();
+  State<_DeleteTagsDialog> createState() => _DeleteTagsDialogState();
 }
 
-class _DeleteTagsDialogState extends State<DeleteTagsDialog> {
+class _DeleteTagsDialogState extends State<_DeleteTagsDialog> {
   late Set<String> _categories;
 
   @override

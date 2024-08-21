@@ -55,8 +55,6 @@ dependencies:
   meta: ^1.8.0
   bloc: ^8.0.0
 
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,7 +68,7 @@ dev_dependencies:
   build_runner: ^2.4.8
   build_web_compilers: ^4.0.9
   build: ^2.4.1
-  lint: ^2.3.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -114,7 +112,15 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
-  #  - assets/images/cake.png
+    - assets/
+    - assets/my_finance.png
+    - assets/background.png
+    - assets/foreground.png
   #  - assets/images/fish.jpg
   #  - assets/images/meat.jpeg
   #  - assets/images/salad.jpg
+flutter_icons:
+  android: true
+  image_path: "assets/my_finance.png"
+  adaptive_icon_background: "assets/background.png"
+  adaptive_icon_foreground: "assets/foreground.png"

@@ -116,6 +116,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return provider.Consumer<Settings>(
       builder: (context, settings, child) {
+        print("main" + settings.hashCode.toString() + "  " + settings.locale.toString());
         return Localizations.override(
           context: context,
           locale: settings.locale,

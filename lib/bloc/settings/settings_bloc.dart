@@ -28,6 +28,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     on<SwitchLanguage>(
       (event, emit) async {
+        print("swith " + _settings.hashCode.toString());
         _settings.toggleLanguage(Locale(event.locale));
       },
     );
